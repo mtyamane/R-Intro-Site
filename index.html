@@ -40,7 +40,7 @@
     <div class="hero-meta">
       <span class="meta-tag">Field Manual</span>
       <span class="meta-divider">·</span>
-      <span class="meta-tag">v1.0</span>
+      <span class="meta-tag">v1.01</span>
       <span class="meta-divider">·</span>
       <span class="meta-tag">Watershed Ecology</span>
     </div>
@@ -227,18 +227,82 @@
 
   <p>With this structure and a project file, references like <code>read.csv("data/nitrate.csv")</code> work the same on your laptop, your collaborator's laptop, and the lab computer. No absolute paths needed.</p>
 
-  <h3>RStudio versus the code cells on this webpage</h3>
-  <p>The code cells you'll use throughout this guide are intentionally simple — they're designed for learning, not for managing a real research project. Here's how the two environments compare:</p>
+  <h3>The R authoring environment</h3>
+  <p>So far we've talked about R (the language) and RStudio (the editor). But when you start writing real analyses, you'll encounter a few more terms: <strong>IDE</strong>, <strong>.R scripts</strong>, and <strong>R Markdown / Quarto documents</strong>. These are the three things that make up your day-to-day R workflow, and it's worth a quick tour before we head into the actual coding chapters.</p>
+
+  <h4>RStudio is an IDE</h4>
+  <p>RStudio is what's called an <strong>integrated development environment</strong>, or IDE for short. The name is more intimidating than the idea: an IDE is just a single application that bundles together the tools you need to write code. You've already seen the four panes — the source editor, the console, the environment viewer, and the files/plots/help pane. Each of those is a separate tool, but RStudio integrates them into one window so you don't have to juggle multiple programs.</p>
+
+  <p>Other languages have their own IDEs (VS Code, PyCharm, Eclipse, Xcode). For R, the dominant choice is RStudio. You could write R code in any plain text editor and run it from a terminal, but RStudio's tight integration of the console, plots, and help pages makes it dramatically more pleasant.</p>
+
+  <h4>.R scripts: the standard file format</h4>
+  <p>An <strong>R script</strong> is a plain text file with the extension <code>.R</code>. It contains nothing but R code (and comments). When you run a script, R executes the lines from top to bottom as if you'd typed them into the console one at a time. Here's what a small script might look like:</p>
+
+  <div class="code-cell" data-cell-id="cell-1-script">
+    <div class="code-cell-header">
+      <span class="code-cell-label">Example: bear_creek_analysis.R</span>
+      <button class="run-btn">Run</button>
+    </div>
+    <textarea class="code-editor"># Bear Creek nitrate analysis — May 2026
+# Author: J. Doe
+
+library(ggplot2)
+
+# Load and summarize the data (simulated here for demonstration)
+nitrate <- c(0.42, 1.85, 0.31, 2.94, 1.12, 0.58, 3.21, 0.27, 2.05, 1.43)
+mean(nitrate)
+sd(nitrate)</textarea>
+    <div class="code-output" data-output></div>
+  </div>
+
+  <p>Scripts are the right tool when your output <em>is</em> the analysis itself — a script that loads data, fits a model, and saves a figure to disk. They're the workhorses of reproducible research: anyone with the same data can run your <code>.R</code> file and get the same results. Most assignments and most published analysis pipelines are built from one or more <code>.R</code> scripts.</p>
+
+  <h4>R Markdown and Quarto: writing with code</h4>
+  <p>Sometimes the deliverable isn't just the analysis but a <em>document</em> — a lab report, a methods write-up, a thesis chapter. For these, plain <code>.R</code> scripts aren't quite right because you also want explanations, headings, equations, figures, and tables, all woven together with the code that produced them.</p>
+
+  <p>That's what <strong>R Markdown</strong> (<code>.Rmd</code> files) and <strong>Quarto</strong> (<code>.qmd</code> files) are for. They're two closely-related formats — Quarto is Posit's newer, more flexible successor to R Markdown — that let you mix writing and code in one file. Quarto is increasingly the modern default, but the two work so similarly that you can treat them as one topic for now. We'll just call them "Rmd/Quarto" here.</p>
+
+  <p>Inside one of these files, prose is written as ordinary text (with markdown formatting for things like <strong>bold</strong> and headings), and R code lives in <strong>code chunks</strong>: small blocks fenced off by triple-backticks with <code>{r}</code> at the top. When you press <strong>Knit</strong> (for Rmd) or <strong>Render</strong> (for Quarto) in RStudio, the file is processed end-to-end: each code chunk runs, its output is captured (numbers, tables, figures), and everything is woven into a polished output document — usually HTML, PDF, or Word.</p>
+
+  <p>A typical chunk inside an Rmd/Quarto file looks like this:</p>
+
+  <div class="code-cell" data-cell-id="cell-1-rmd">
+    <div class="code-cell-header">
+      <span class="code-cell-label">Example chunk inside a .Rmd or .qmd document</span>
+      <button class="run-btn">Run</button>
+    </div>
+    <textarea class="code-editor"># Above this chunk, prose like "Figure 1 shows the nitrate gradient."
+# (Imagine the prose written in normal text, not in this code cell.)
+
+# The chunk itself runs as R code:
+library(ggplot2)
+gradient_data <- data.frame(
+  distance = c(0.1, 0.5, 1.0, 1.5, 2.0, 3.0, 4.0, 5.0),
+  nitrate  = c(4.8, 4.2, 3.5, 3.1, 2.6, 1.9, 1.5, 1.1)
+)
+ggplot(gradient_data, aes(x = distance, y = nitrate)) +
+  geom_point() + geom_smooth(method = "lm")
+
+# When the document is knitted, the figure appears here in place of the code,
+# embedded between the surrounding paragraphs.</textarea>
+    <div class="code-output" data-output></div>
+  </div>
+
+  <p>For example: a watershed bioassessment lab report might have an introduction paragraph, a code chunk that loads the field data, another paragraph describing the analysis, a chunk that fits a linear model and prints the summary, then a chunk that produces a final figure — all in one <code>.Rmd</code> or <code>.qmd</code> file. When you knit it, the result is a single PDF or HTML document with the prose flowing naturally around the figures and tables generated by your code. No copy-pasting between R and Word. If the data updates, you just re-knit and everything regenerates.</p>
+
+  <h4>How this webpage compares to all of the above</h4>
+  <p>The code cells you'll use throughout this guide sit in an interesting middle ground. Conceptually, they're closest to <strong>Rmd/Quarto chunks</strong> — prose and runnable R code interleaved on a page — except that this page is fixed and you don't render anything. Compared to working in RStudio with real <code>.R</code> or <code>.qmd</code> files, the code cells here are intentionally simpler:</p>
 
   <ul>
-    <li><strong>Persistence.</strong> Each code cell on this webpage runs in a fresh R environment. Variables you create in one cell are <em>not</em> automatically available in the next cell — that's why some exercises ask you to recreate a data frame at the top of your answer. In RStudio, your variables persist for the entire session and you can refer to them across many lines and scripts.</li>
-    <li><strong>Saving your work.</strong> Code typed into a cell here lives only as long as the browser tab is open — refresh and it's gone. RStudio saves your scripts as files on your computer that you can edit, version-control with git, and share.</li>
+    <li><strong>Persistence between cells.</strong> Each cell on this webpage runs in a fresh R environment, so variables you create in one cell are <em>not</em> automatically available in the next — that's why some exercises ask you to recreate a data frame at the top of your answer. In RStudio (script or notebook), your variables persist for the entire session.</li>
+    <li><strong>Saving your work.</strong> Code typed into a cell here lives only as long as the browser tab is open. <code>.R</code>, <code>.Rmd</code>, and <code>.qmd</code> files all save to your computer where you can edit, version-control with git, and share them.</li>
     <li><strong>Packages.</strong> Only a handful of R packages are pre-loaded in your browser (we have <code>ggplot2</code>, but not the full tidyverse). In RStudio you can install any of the ~20,000 packages on CRAN with a single command.</li>
     <li><strong>Data files.</strong> The cells here can't read CSVs or other files from your hard drive. In RStudio you'll routinely use <code>read.csv()</code>, <code>read_csv()</code>, or specialized functions like <code>dataRetrieval::readNWISdv()</code> to pull discharge records straight from the USGS.</li>
-    <li><strong>Speed.</strong> The browser version downloads R-compiled-to-WebAssembly the first time you visit, which takes ~30 seconds. RStudio runs at native speed once installed.</li>
+    <li><strong>Knitting / rendering.</strong> This page is hand-written HTML; nothing gets rendered from a source document. With Rmd/Quarto, the file you write <em>is</em> the source — you knit it whenever you want to produce the final output.</li>
+    <li><strong>Speed.</strong> The browser version downloads R-compiled-to-WebAssembly the first time you visit, which takes ~30 seconds. R running locally through RStudio is at native speed once installed.</li>
   </ul>
 
-  <p>For working through this guide, the code cells are perfect — you can focus on learning R without worrying about installation. Once you're ready to do your own analyses on real data, switch to RStudio. The R syntax you learn here works identically in both environments.</p>
+  <p>The code cells here are good enough to work through this guide — you can focus on learning R without worrying about installation, file paths, or knitting. Once you're ready to do your own analyses, you'll likely use <code>.R</code> scripts for the analysis itself and <code>.Rmd</code>/<code>.qmd</code> documents to write up the results. The beauty is that the R syntax you learn here works identically in all three.</p>
 </section>
 
 <!-- ============================================ -->
@@ -546,10 +610,10 @@ sum(nitrate > 1.0)</textarea>
 <section id="section-5" class="chapter">
   <div class="chapter-header">
     <span class="chapter-number">Chapter 05</span>
-    <h2 class="chapter-title">Data Frames: Your Watershed Spreadsheet</h2>
+    <h2 class="chapter-title">Data Frames: The R Spreadsheet</h2>
   </div>
 
-  <p>A <strong>data frame</strong> is R's version of a spreadsheet. It has rows (typically one per sample, site, or sampling date) and columns (one per measurement or variable). Data frames are the workhorse of watershed data analysis.</p>
+  <p>A <strong>data frame</strong> is R's version of a spreadsheet. It has rows (typically one per sample, site, or sampling date) and columns (one per measurement or variable). Data frames are the workhorse of data analysis.</p>
 
   <p>Let's build a small data frame from a hypothetical synoptic stream survey:</p>
 
@@ -1647,7 +1711,7 @@ ggplot(watershed_survey, aes(x = nitrate_mgL, y = ept_taxa, color = pct_ag)) +
 
 <footer class="site-footer">
   <div class="footer-inner">
-    <p class="footer-credit">An interactive R tutorial · Watershed Ecology · Built with <a href="https://docs.r-wasm.org/webr/latest/" target="_blank" rel="noopener">WebR</a></p>
+    <p class="footer-credit"> © 2026 Mark Yamane · Built with <a href="https://docs.r-wasm.org/webr/latest/" target="_blank" rel="noopener">WebR</a></p>
     <p class="footer-license">Course material — adapt freely for non-commercial educational use.</p>
   </div>
 </footer>
