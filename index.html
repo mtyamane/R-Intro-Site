@@ -1,0 +1,1662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Introduction to R for Watershed Ecology</title>
+<meta name="description" content="A hands-on, interactive R guide for watershed ecology. Learn variables, data frames, linear models, and ggplot2 with stream-based examples." />
+
+<!-- Fonts: a distinctive editorial pairing -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400;1,8..60,600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+
+<!-- Highlight.js for R syntax highlighting -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-light.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/r.min.js"></script>
+
+<!-- coi-serviceworker enables COOP/COEP headers via service worker
+     so that SharedArrayBuffer (required by WebR) works on GitHub Pages.
+     MUST be loaded before WebR. -->
+<script src="./coi-serviceworker.js"></script>
+
+<!-- Assessment specifications (plain script — loads even if WebR fails) -->
+<script src="./js/assessments.js"></script>
+
+<!-- WebR for in-browser R execution -->
+<script type="module" src="./js/runner.js"></script>
+
+<link rel="stylesheet" href="./css/styles.css" />
+</head>
+<body>
+
+<!-- Sticky reading progress -->
+<div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+
+<!-- Top banner -->
+<header class="hero">
+  <div class="hero-inner">
+    <div class="hero-meta">
+      <span class="meta-tag">Field Manual</span>
+      <span class="meta-divider">·</span>
+      <span class="meta-tag">v1.0</span>
+      <span class="meta-divider">·</span>
+      <span class="meta-tag">Watershed Ecology</span>
+    </div>
+    <h1 class="hero-title">
+      <span class="hero-overline">An Introduction to</span>
+      <span class="hero-display">R for the<br/><em>Watershed Sciences</em></span>
+    </h1>
+    <p class="hero-sub">A hands-on, interactive guide for undergraduates with no programming background. Read, run, and modify real R code directly in your browser.</p>
+    <div class="hero-actions">
+      <a class="btn-primary" href="#section-1">Begin reading <span aria-hidden="true">→</span></a>
+      <a class="btn-secondary" href="#about">About this guide</a>
+    </div>
+  </div>
+  <svg class="hero-stream" viewBox="0 0 1200 220" preserveAspectRatio="none" aria-hidden="true">
+    <defs>
+      <linearGradient id="streamGrad" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="var(--water-mid)" stop-opacity="0.0"/>
+        <stop offset="100%" stop-color="var(--water-deep)" stop-opacity="0.4"/>
+      </linearGradient>
+    </defs>
+    <path d="M0,140 C200,80 400,200 600,120 C800,40 1000,180 1200,100 L1200,220 L0,220 Z" fill="url(#streamGrad)"/>
+    <path d="M0,160 C200,120 400,210 600,150 C800,90 1000,200 1200,140" fill="none" stroke="var(--water-mid)" stroke-width="1" stroke-opacity="0.5"/>
+    <path d="M0,180 C200,150 400,215 600,175 C800,135 1000,210 1200,165" fill="none" stroke="var(--water-mid)" stroke-width="1" stroke-opacity="0.3"/>
+  </svg>
+</header>
+
+<!-- Layout: TOC + content -->
+<div class="layout">
+
+<aside class="toc" aria-label="Table of contents">
+  <details class="toc-details" open>
+    <summary class="toc-summary">
+      <span class="toc-summary-label">Contents</span>
+      <span class="toc-summary-current" aria-hidden="true"></span>
+      <span class="toc-summary-chevron" aria-hidden="true">▾</span>
+    </summary>
+    <div class="toc-inner">
+      <p class="toc-heading">Contents</p>
+      <ol class="toc-list">
+        <li><a href="#section-1"><span class="toc-num">01</span> Welcome to R</a></li>
+        <li><a href="#section-2"><span class="toc-num">02</span> Terminology</a></li>
+        <li><a href="#section-3"><span class="toc-num">03</span> Variables</a></li>
+        <li><a href="#section-4"><span class="toc-num">04</span> Vectors</a></li>
+        <li><a href="#section-5"><span class="toc-num">05</span> Data Frames</a></li>
+        <li><a href="#section-6"><span class="toc-num">06</span> Operators</a></li>
+        <li><a href="#section-7"><span class="toc-num">07</span> Equations to Code</a></li>
+        <li><a href="#section-8"><span class="toc-num">08</span> Column Math</a></li>
+        <li><a href="#section-9"><span class="toc-num">09</span> For Loops</a></li>
+        <li><a href="#section-10"><span class="toc-num">10</span> While Loops</a></li>
+        <li><a href="#section-11"><span class="toc-num">11</span> Linear Models</a></li>
+        <li><a href="#section-12"><span class="toc-num">12</span> Plotting (Base R)</a></li>
+        <li><a href="#section-13"><span class="toc-num">13</span> Plotting (ggplot2)</a></li>
+        <li><a href="#section-14"><span class="toc-num">14</span> Capstone</a></li>
+        <li><a href="#section-15"><span class="toc-num">15</span> Where to Go Next</a></li>
+      </ol>
+      <div class="toc-status">
+        <p class="toc-status-label">R engine</p>
+        <div class="r-status" id="r-status">
+          <span class="r-status-dot"></span>
+          <span class="r-status-text">Loading WebR…</span>
+        </div>
+        <p class="toc-help">First load takes ~30 seconds. Code cells run R right in your browser — no install required.</p>
+      </div>
+    </div>
+  </details>
+</aside>
+
+<main class="content">
+
+<!-- ABOUT -->
+<section id="about" class="callout-about">
+  <h2 class="about-title">How to use this guide</h2>
+  <div class="about-grid">
+    <div>
+      <p class="about-step"><span class="about-step-num">1</span> Each chapter introduces one concept with worked examples in gray code blocks. Click <strong>Run</strong> to execute the code — the output appears below the cell.</p>
+    </div>
+    <div>
+      <p class="about-step"><span class="about-step-num">2</span> Every exercise has an empty editor where you write your own code. Use <strong>Just run</strong> to test how it behaves, or <strong>Run &amp; check</strong> to find out whether your answer is correct.</p>
+    </div>
+    <div>
+      <p class="about-step"><span class="about-step-num">3</span> Click <strong>Reveal solution</strong> when you're ready to compare. Try the exercise yourself first — that's where the learning happens.</p>
+    </div>
+  </div>
+  <p class="about-note">⚠️ A note on errors: you <em>will</em> get error messages, and that's normal. Read them carefully — they're R telling you exactly where it got confused. Common culprits: a missing parenthesis, a typo, or forgetting a comma.</p>
+</section>
+
+<!-- ============================================ -->
+<!-- SECTION 1 -->
+<!-- ============================================ -->
+<section id="section-1" class="chapter">
+  <div class="chapter-header">
+    <span class="chapter-number">Chapter 01</span>
+    <h2 class="chapter-title">Welcome to R</h2>
+  </div>
+
+  <p>R is a free programming language built for working with data. In watershed ecology, it's used for almost everything: analyzing stream chemistry, estimating discharge, modeling nutrient loads, examining macroinvertebrate community composition, and producing publication-quality figures from monitoring data. By the end of this guide, you'll be able to do real watershed data analysis in R.</p>
+
+  <p>You don't need any programming experience. We'll go step by step, and there are exercises throughout to help you practice. Each exercise is followed by a worked solution so you can check your answer and understand the reasoning.</p>
+
+  <h3>Two ways to use R</h3>
+  <p>You have two options for working with R. Both run the same R language; the difference is where the code lives.</p>
+
+  <p><strong>Right here in your browser.</strong> Every gray code cell on this page is a tiny live R session. Click <strong>Run</strong> and the code executes immediately, with output shown below the cell. You don't have to install anything. This is great for learning the language and working through this guide.</p>
+
+  <p><strong>On your own computer with R + RStudio.</strong> For real coursework — projects, assignments, research — you'll want R installed locally so you can save your work, manage data files, and use the full ecosystem of R packages. The rest of this chapter walks you through installing both pieces and explains how the desktop environment compares to the in-browser cells you'll use here.</p>
+
+  <h3>Installing R and RStudio</h3>
+  <p>You need <strong>two</strong> separate downloads. R is the language itself. RStudio is the editor (the "integrated development environment," or IDE) you use to write and run R code. Install R first, then RStudio.</p>
+
+  <h4>Step 1 — Install R</h4>
+  <p>Go to <a href="https://cran.r-project.org/" target="_blank" rel="noopener">cran.r-project.org</a> (the Comprehensive R Archive Network). Pick the link that matches your operating system:</p>
+
+  <ul>
+    <li><strong>Windows:</strong> Click "Download R for Windows" → "base" → "Download R-X.X.X for Windows". Run the installer with default settings.</li>
+    <li><strong>macOS:</strong> Click "Download R for macOS" and download the <code>.pkg</code> file matching your processor. Apple Silicon Macs (M1/M2/M3/M4) use the "arm64" build; older Intel Macs use the "x86_64" build. If you're not sure, click the Apple menu → About This Mac to check.</li>
+    <li><strong>Linux:</strong> Click "Download R for Linux" and follow the instructions for your distribution. On Ubuntu/Debian, the simplest command is <code>sudo apt install r-base</code>; on Fedora, <code>sudo dnf install R</code>. CRAN also has more recent builds maintained directly by the R project — check the page for your distribution.</li>
+  </ul>
+
+  <h4>Step 2 — Install RStudio</h4>
+  <p>Go to <a href="https://posit.co/download/rstudio-desktop/" target="_blank" rel="noopener">posit.co/download/rstudio-desktop</a>. (RStudio is now made by a company called Posit, but the software is still called RStudio.) The page should auto-detect your OS and show the right download. Run the installer.</p>
+
+  <p>Once both are installed, you only ever open <em>RStudio</em> — it finds and uses the R installation behind the scenes. You generally don't open R directly.</p>
+
+  <h3>What RStudio looks like</h3>
+  <p>When you open RStudio for the first time, you'll see a window divided into four panes. The screenshot below shows the typical layout:</p>
+
+  <figure class="rstudio-figure">
+    <img src="img/rstudio-layout.png" alt="RStudio's four-pane layout, showing the source editor, console, environment, and files panes" />
+    <figcaption>Screenshot of RStudio's four-pane layout</figcaption>
+  </figure>
+
+  <p>Each pane has a job. Here's what they do, starting in the top-left and moving clockwise:</p>
+
+  <ol class="rstudio-panes">
+    <li>
+      <strong>Source editor (top-left)</strong> — where you write and save R scripts. A script is just a text file ending in <code>.R</code> that contains R code. You type code here and run it line-by-line (with <kbd>Ctrl</kbd>+<kbd>Enter</kbd> on Windows/Linux, <kbd>Cmd</kbd>+<kbd>Return</kbd> on Mac), or run the whole script at once. This is the equivalent of the <strong>code cells</strong> on this webpage — except that on your computer your scripts persist between sessions, you can have many of them open as tabs, and you can organize them into project folders.
+    </li>
+    <li>
+      <strong>Environment / History (top-right)</strong> — shows everything currently in memory. Variables, vectors, data frames you've created — all listed here with their values or dimensions. Think of it as a live inventory of your R session. Clicking a data frame opens it in a spreadsheet-style viewer, which is enormously helpful for inspecting watershed datasets. The History tab shows every command you've ever typed in the current session.
+    </li>
+    <li>
+      <strong>Files / Plots / Help / Packages / Viewer (bottom-right)</strong> — a multi-purpose pane.
+      <ul>
+        <li><em>Files</em> browses your project folder.</li>
+        <li><em>Plots</em> displays figures you create with <code>plot()</code>, <code>ggplot()</code>, etc. — you can flip back through every plot you've made.</li>
+        <li><em>Help</em> shows R's built-in documentation. Type <code>?mean</code> in the console and the help page for <code>mean()</code> appears here.</li>
+        <li><em>Packages</em> lists installed packages and lets you install new ones.</li>
+        <li><em>Viewer</em> shows HTML output (knit reports, interactive widgets).</li>
+      </ul>
+    </li>
+    <li>
+      <strong>Console (bottom-left)</strong> — the live R prompt. Anything you type here is executed immediately and the result appears right below. The console is what's actually running your R commands; the Source editor pane is just a place to write code that you then send to the console. When you click "Run" on a code cell on this webpage, you can think of it as sending that cell's contents to a hidden console.
+    </li>
+  </ol>
+
+  <h3>Projects and working directories</h3>
+  <p>Once you start doing real analyses you'll have a folder full of related files: your R scripts, raw data, figures, and notes. Two RStudio concepts help you keep them organized.</p>
+
+  <p><strong>The working directory.</strong> R has a notion of a "current folder" — the place it looks for files when you say things like <code>read.csv("nitrate.csv")</code>. That folder is called the <strong>working directory</strong>. You can ask R where it currently is with <code>getwd()</code>, and you can change it with <code>setwd("/path/to/folder")</code>. If R can't find a file you're trying to read, the most common reason is that your working directory is somewhere else and R is looking in the wrong place.</p>
+
+  <p><strong>RStudio Projects.</strong> An RStudio Project is just a folder with a small <code>.Rproj</code> file inside it. When you open a project (File → Open Project, or by double-clicking the <code>.Rproj</code> file), three useful things happen:</p>
+
+  <ul>
+    <li>Your working directory is automatically set to the project folder. No more <code>setwd()</code> with hardcoded paths.</li>
+    <li>RStudio remembers which scripts you had open last time, so you pick up where you left off.</li>
+    <li>Variables you defined in your last session can optionally be restored.</li>
+  </ul>
+
+  <p>The recommended workflow is: <strong>one project per analysis</strong>. For a class assignment, make a folder called something like <code>watershed-bioassessment</code>, create a new RStudio Project in it (File → New Project → New Directory), and put all your scripts and data inside. When you reopen the project a week later, you won't have to remember anything about where files live — R already knows.</p>
+
+  <p>A typical project folder might look like this:</p>
+
+  <ul>
+    <li><code>watershed-bioassessment/</code> — the project root
+      <ul>
+        <li><code>watershed-bioassessment.Rproj</code> — the project file</li>
+        <li><code>data/</code> — raw data files (CSVs, shapefiles)</li>
+        <li><code>scripts/</code> — your <code>.R</code> analysis scripts</li>
+        <li><code>figures/</code> — plots you generate</li>
+        <li><code>README.md</code> — a brief note describing the project</li>
+      </ul>
+    </li>
+  </ul>
+
+  <p>With this structure and a project file, references like <code>read.csv("data/nitrate.csv")</code> work the same on your laptop, your collaborator's laptop, and the lab computer. No absolute paths needed.</p>
+
+  <h3>RStudio versus the code cells on this webpage</h3>
+  <p>The code cells you'll use throughout this guide are intentionally simple — they're designed for learning, not for managing a real research project. Here's how the two environments compare:</p>
+
+  <ul>
+    <li><strong>Persistence.</strong> Each code cell on this webpage runs in a fresh R environment. Variables you create in one cell are <em>not</em> automatically available in the next cell — that's why some exercises ask you to recreate a data frame at the top of your answer. In RStudio, your variables persist for the entire session and you can refer to them across many lines and scripts.</li>
+    <li><strong>Saving your work.</strong> Code typed into a cell here lives only as long as the browser tab is open — refresh and it's gone. RStudio saves your scripts as files on your computer that you can edit, version-control with git, and share.</li>
+    <li><strong>Packages.</strong> Only a handful of R packages are pre-loaded in your browser (we have <code>ggplot2</code>, but not the full tidyverse). In RStudio you can install any of the ~20,000 packages on CRAN with a single command.</li>
+    <li><strong>Data files.</strong> The cells here can't read CSVs or other files from your hard drive. In RStudio you'll routinely use <code>read.csv()</code>, <code>read_csv()</code>, or specialized functions like <code>dataRetrieval::readNWISdv()</code> to pull discharge records straight from the USGS.</li>
+    <li><strong>Speed.</strong> The browser version downloads R-compiled-to-WebAssembly the first time you visit, which takes ~30 seconds. RStudio runs at native speed once installed.</li>
+  </ul>
+
+  <p>For working through this guide, the code cells are perfect — you can focus on learning R without worrying about installation. Once you're ready to do your own analyses on real data, switch to RStudio. The R syntax you learn here works identically in both environments.</p>
+</section>
+
+<!-- ============================================ -->
+<!-- SECTION 2 — Terminology -->
+<!-- ============================================ -->
+<section id="section-2" class="chapter">
+  <div class="chapter-header">
+    <span class="chapter-number">Chapter 02</span>
+    <h2 class="chapter-title">Terminology: Code, Functions, and Operators</h2>
+  </div>
+
+  <p>Before you write your first line of R, a few vocabulary words will save you a lot of confusion. This short chapter introduces the four terms — <strong>code</strong>, <strong>comments</strong>, <strong>functions</strong>, and <strong>operators</strong> — that show up on every page of this guide. Once these click, the rest of the syntax stops looking like a foreign language.</p>
+
+  <h3>Code</h3>
+  <p><strong>Code</strong> is just text — instructions written for the computer to follow. Each line tells R to do something specific. R reads your code top to bottom, one line at a time, and does exactly what you say. There's no magic; if R does something unexpected, it's because the code <em>told</em> it to. Reading the line carefully is almost always the first step in fixing a bug.</p>
+
+  <p>Lines that start with <code>#</code> are <strong>comments</strong> — notes for humans that R ignores completely. Comments are how you explain to your future self (or a classmate) what your code is doing:</p>
+
+  <div class="code-cell" data-cell-id="cell-2-1">
+    <div class="code-cell-header">
+      <span class="code-cell-label">R</span>
+      <button class="run-btn">Run</button>
+    </div>
+    <textarea class="code-editor"># This whole line is a comment. R ignores it.
+2 + 2          # The 2 + 2 part runs; everything after # is a comment.</textarea>
+    <div class="code-output" data-output></div>
+  </div>
+
+  <h3>Functions</h3>
+  <p>A <strong>function</strong> is a named procedure that takes one or more inputs and gives back a result. You can think of a function like a labeled machine: you put something in, the machine does its job, and something comes out. R comes with thousands of functions built in, and you'll learn many of them throughout this guide.</p>
+
+  <p>You "call" (run) a function by writing its name followed by parentheses. Whatever you put inside the parentheses is the <strong>input</strong> (sometimes called an <em>argument</em>). For example, <code>sqrt()</code> is the square-root function:</p>
+
+  <div class="code-cell" data-cell-id="cell-2-2">
+    <div class="code-cell-header">
+      <span class="code-cell-label">R</span>
+      <button class="run-btn">Run</button>
+    </div>
+    <textarea class="code-editor">sqrt(16)        # input: 16, output: 4
+sqrt(2)         # input: 2, output: about 1.414
+
+# Some functions take multiple inputs separated by commas
+round(3.14159, 2)   # input: a number and a digit count; output: 3.14</textarea>
+    <div class="code-output" data-output></div>
+  </div>
+
+  <p>The parentheses are essential. <code>sqrt(16)</code> calls the function on 16, but <code>sqrt</code> by itself just refers to the function as an object — like saying the word "calculator" instead of actually using one. Forgetting parentheses, or having them in the wrong place, is the single most common source of beginner errors. If R gives you a confusing message, count your parentheses first.</p>
+
+  <p>You'll see this same pattern everywhere in R. <code>mean(x)</code> takes a vector <code>x</code> and gives back its average. <code>length(x)</code> gives you how many items are in <code>x</code>. <code>read.csv("nitrate.csv")</code> reads a CSV file. The pattern is always <em>function-name</em> followed by parentheses around the input.</p>
+
+  <h3>Operators</h3>
+  <p>An <strong>operator</strong> is a special shortcut symbol that acts like a tiny function. You've used them in math your whole life: <code>+</code>, <code>-</code>, <code>*</code>, <code>/</code>. R has the same arithmetic operators, plus a few R-specific ones like <code>&lt;-</code> (used to store values in variables, which we'll see in the next chapter) and <code>==</code> (which checks whether two things are equal).</p>
+
+  <p>Operators don't use parentheses around their inputs — they sit between them. So <code>2 + 3</code> is an operator (<code>+</code>) acting on two numbers, while <code>sum(2, 3)</code> is a function (<code>sum</code>) acting on two numbers. Both give 5; the syntax is just different.</p>
+
+  <p>That's the whole vocabulary you need to start reading R code: <strong>code</strong> is what you type, <strong>comments</strong> are notes for humans, <strong>functions</strong> are named procedures called with parentheses, and <strong>operators</strong> are shortcut symbols. With those four ideas in mind, the rest of this guide should feel a lot less mysterious.</p>
+</section>
+
+<!-- ============================================ -->
+<!-- SECTION 3 — Variables -->
+<!-- ============================================ -->
+<section id="section-3" class="chapter">
+  <div class="chapter-header">
+    <span class="chapter-number">Chapter 03</span>
+    <h2 class="chapter-title">Variable Assignment: Storing Values</h2>
+  </div>
+
+  <p>A <strong>variable</strong> is a named container that holds a value. Once you store something in a variable, you can refer to it by name in later calculations. This saves typing and makes your code easier to read.</p>
+
+  <p>In R, we assign values using the arrow operator <code>&lt;-</code>. Read it as "gets":</p>
+
+  <div class="code-cell" data-cell-id="cell-3-1">
+    <div class="code-cell-header">
+      <span class="code-cell-label">R</span>
+      <button class="run-btn">Run</button>
+    </div>
+    <textarea class="code-editor"># Store a measurement of stream discharge (in cubic meters per second)
+discharge_cms <- 2.34
+
+# Store a stream name (text values go in quotes)
+stream_name <- "Bear Creek"
+
+# Store a count of macroinvertebrate taxa observed
+taxa_richness <- 23
+
+# To see what's in a variable, just type its name
+discharge_cms
+stream_name
+taxa_richness</textarea>
+    <div class="code-output" data-output></div>
+  </div>
+
+  <p>You can use variables in calculations:</p>
+
+  <div class="code-cell" data-cell-id="cell-3-2">
+    <div class="code-cell-header">
+      <span class="code-cell-label">R</span>
+      <button class="run-btn">Run</button>
+    </div>
+    <textarea class="code-editor"># Convert that discharge from cubic meters per second to cubic feet per second
+# (1 cms = 35.3147 cfs)
+discharge_cfs <- discharge_cms * 35.3147
+discharge_cfs</textarea>
+    <div class="code-output" data-output></div>
+  </div>
+
+  <h3>Naming rules</h3>
+  <p>Variable names should be descriptive. <code>nitrate_mg_per_L</code> is far better than <code>x</code> because anyone reading your code (including future-you) will know what it means. A few rules:</p>
+  <ul>
+    <li>Names can contain letters, numbers, dots, and underscores</li>
+    <li>Names must start with a letter</li>
+    <li>R is case-sensitive: <code>Discharge</code> and <code>discharge</code> are different variables</li>
+    <li>Avoid using names of built-in functions like <code>mean</code>, <code>sum</code>, or <code>c</code></li>
+  </ul>
+
+  <!-- Exercise 3.1 -->
+  <div class="exercise" data-exercise-id="ex-3-1">
+    <div class="exercise-header">
+      <span class="exercise-tag">Exercise 3.1</span>
+      <span class="exercise-meta">Velocity-area discharge</span>
+    </div>
+    <div class="exercise-prompt">
+      <p>A stream's cross-section has a measured width of 4.2 meters and an average depth of 0.35 meters. The mean current velocity is 0.68 meters per second. Create three variables to store these values, then compute discharge using the velocity-area method:</p>
+      <p class="equation">Q = w × d × v</p>
+      <p>where Q is discharge (m³/s), w is width (m), d is mean depth (m), and v is mean velocity (m/s). Print the result.</p>
+    </div>
+
+    <div class="code-cell exercise-cell" data-cell-id="ex-3-1-attempt" data-assess="ex-3-1">
+      <div class="code-cell-header">
+        <span class="code-cell-label">Your answer</span>
+        <button class="run-btn">Run</button>
+      </div>
+      <textarea class="code-editor" placeholder="# Write your code here…"></textarea>
+      <div class="code-output" data-output></div>
+    </div>
+
+    <details class="solution">
+      <summary><span class="solution-toggle">Reveal solution</span></summary>
+      <div class="solution-body">
+        <div class="code-cell" data-cell-id="ex-3-1-sol">
+          <div class="code-cell-header">
+            <span class="code-cell-label">R · Solution</span>
+            <button class="run-btn">Run</button>
+          </div>
+          <textarea class="code-editor">width_m <- 4.2
+depth_m <- 0.35
+velocity_ms <- 0.68
+discharge <- width_m * depth_m * velocity_ms
+discharge</textarea>
+          <div class="code-output" data-output></div>
+        </div>
+        <p class="explanation"><strong>Explanation.</strong> We stored each measurement in a clearly named variable, then translated the equation directly. The velocity-area method is the most basic field technique for measuring stream discharge, and it's the foundation for more sophisticated methods you'll encounter later (like the midsection method that integrates across multiple verticals). A discharge of about 1 m³/s indicates a small to mid-sized headwater stream.</p>
+      </div>
+    </details>
+  </div>
+</section>
+
+<!-- ============================================ -->
+<!-- SECTION 4 — Vectors -->
+<!-- ============================================ -->
+<section id="section-4" class="chapter">
+  <div class="chapter-header">
+    <span class="chapter-number">Chapter 04</span>
+    <h2 class="chapter-title">Vectors: Lists of Values</h2>
+  </div>
+
+  <p>In watershed ecology, you almost never make just one measurement — you sample across sites, dates, or depths. A <strong>vector</strong> is an ordered list of values of the same type (all numbers, or all text). You build vectors with the <code>c()</code> function, which stands for "combine."</p>
+
+  <div class="code-cell" data-cell-id="cell-4-1">
+    <div class="code-cell-header">
+      <span class="code-cell-label">R</span>
+      <button class="run-btn">Run</button>
+    </div>
+    <textarea class="code-editor"># Daily mean discharge (m³/s) over a week
+weekly_q <- c(2.1, 2.4, 8.7, 5.3, 3.2, 2.6, 2.3)
+weekly_q
+
+# Dissolved oxygen readings (mg/L) at 8 sites along a stream
+do_mg_L <- c(9.2, 8.8, 7.5, 6.1, 5.8, 7.2, 8.4, 9.0)
+
+# Site names from a watershed survey
+site_names <- c("Headwater", "Trib_A", "Below_Trib_A", "Mid_reach", "Pasture", "Forest_in")
+site_names</textarea>
+    <div class="code-output" data-output></div>
+  </div>
+
+  <h3>Math on vectors</h3>
+  <p>R applies math operations to every element of a vector at once. This is called <strong>vectorization</strong>, and it's one of the most powerful features of R:</p>
+
+  <div class="code-cell" data-cell-id="cell-4-2">
+    <div class="code-cell-header">
+      <span class="code-cell-label">R</span>
+      <button class="run-btn">Run</button>
+    </div>
+    <textarea class="code-editor"># Convert all DO readings from mg/L to micrograms per liter
+do_mg_L * 1000
+
+# Summary statistics for the DO data
+mean(do_mg_L)
+median(do_mg_L)
+min(do_mg_L)
+max(do_mg_L)
+sd(do_mg_L)
+length(do_mg_L)</textarea>
+    <div class="code-output" data-output></div>
+  </div>
+
+  <div class="aside-note">
+    <strong>⚠ Watch out:</strong> <code>length()</code> here means the number of items in the vector, not stream length. R uses the word in the general sense.
+  </div>
+
+  <h3>Pulling out specific values</h3>
+  <p>Use square brackets <code>[ ]</code> to access individual elements. R indexes from 1 (not 0):</p>
+
+  <div class="code-cell" data-cell-id="cell-4-3">
+    <div class="code-cell-header">
+      <span class="code-cell-label">R</span>
+      <button class="run-btn">Run</button>
+    </div>
+    <textarea class="code-editor">weekly_q <- c(2.1, 2.4, 8.7, 5.3, 3.2, 2.6, 2.3)
+
+# The first day's discharge
+weekly_q[1]
+
+# The third day's discharge — note the storm pulse!
+weekly_q[3]
+
+# Days 2 through 4 (covering the storm and immediate recession)
+weekly_q[2:4]
+
+# Just days 1, 4, and 7
+weekly_q[c(1, 4, 7)]</textarea>
+    <div class="code-output" data-output></div>
+  </div>
+
+  <p>You can also pull out values that meet a condition. This is called <strong>logical subsetting</strong>:</p>
+
+  <div class="code-cell" data-cell-id="cell-4-4">
+    <div class="code-cell-header">
+      <span class="code-cell-label">R</span>
+      <button class="run-btn">Run</button>
+    </div>
+    <textarea class="code-editor">do_mg_L <- c(9.2, 8.8, 7.5, 6.1, 5.8, 7.2, 8.4, 9.0)
+
+# Which sites had DO below 6 mg/L (a common stress threshold for many fish)?
+do_mg_L < 6
+
+# Pull out only the readings below 6 mg/L
+do_mg_L[do_mg_L < 6]</textarea>
+    <div class="code-output" data-output></div>
+  </div>
+
+  <!-- Exercise 4.1 -->
+  <div class="exercise" data-exercise-id="ex-4-1">
+    <div class="exercise-header">
+      <span class="exercise-tag">Exercise 4.1</span>
+      <span class="exercise-meta">Nitrate monitoring</span>
+    </div>
+    <div class="exercise-prompt">
+      <p>You measured nitrate concentrations (mg N/L) at 10 sites across an agricultural watershed: 0.42, 1.85, 0.31, 2.94, 1.12, 0.58, 3.21, 0.27, 2.05, 1.43.</p>
+      <ol class="exercise-steps">
+        <li>Store these in a vector called <code>nitrate</code>.</li>
+        <li>Calculate the mean and standard deviation.</li>
+        <li>The EPA recommends a threshold of 1.0 mg/L for ecologically meaningful nitrate enrichment. How many sites exceeded this threshold?</li>
+      </ol>
+    </div>
+
+    <div class="code-cell exercise-cell" data-cell-id="ex-4-1-attempt" data-assess="ex-4-1">
+      <div class="code-cell-header">
+        <span class="code-cell-label">Your answer</span>
+        <button class="run-btn">Run</button>
+      </div>
+      <textarea class="code-editor" placeholder="# Write your code here…"></textarea>
+      <div class="code-output" data-output></div>
+    </div>
+
+    <details class="solution">
+      <summary><span class="solution-toggle">Reveal solution</span></summary>
+      <div class="solution-body">
+        <div class="code-cell" data-cell-id="ex-4-1-sol">
+          <div class="code-cell-header">
+            <span class="code-cell-label">R · Solution</span>
+            <button class="run-btn">Run</button>
+          </div>
+          <textarea class="code-editor"># (a)
+nitrate <- c(0.42, 1.85, 0.31, 2.94, 1.12, 0.58, 3.21, 0.27, 2.05, 1.43)
+
+# (b)
+mean(nitrate)
+sd(nitrate)
+
+# (c)
+sum(nitrate > 1.0)</textarea>
+          <div class="code-output" data-output></div>
+        </div>
+        <p class="explanation"><strong>Explanation.</strong> Part (c) uses a clever trick. The expression <code>nitrate &gt; 1.0</code> returns a vector of TRUE/FALSE values — one for each site. When you call <code>sum()</code> on logical values, R counts the TRUEs. So <code>sum(nitrate &gt; 1.0)</code> is just "how many sites exceeded the threshold?" You'll use this pattern constantly when screening monitoring data against water quality criteria.</p>
+      </div>
+    </details>
+  </div>
+</section>
+
+<!-- ============================================ -->
+<!-- SECTION 5 — Data Frames -->
+<!-- ============================================ -->
+<section id="section-5" class="chapter">
+  <div class="chapter-header">
+    <span class="chapter-number">Chapter 05</span>
+    <h2 class="chapter-title">Data Frames: Your Watershed Spreadsheet</h2>
+  </div>
+
+  <p>A <strong>data frame</strong> is R's version of a spreadsheet. It has rows (typically one per sample, site, or sampling date) and columns (one per measurement or variable). Data frames are the workhorse of watershed data analysis.</p>
+
+  <p>Let's build a small data frame from a hypothetical synoptic stream survey:</p>
+
+  <div class="code-cell" data-cell-id="cell-5-1">
+    <div class="code-cell-header">
+      <span class="code-cell-label">R</span>
+      <button class="run-btn">Run</button>
+    </div>
+    <textarea class="code-editor">stream_data <- data.frame(
+  site_id     = 1:10,
+  land_use    = c("Forest", "Forest", "Pasture", "Pasture", "Urban",
+                  "Urban", "Forest", "Pasture", "Urban", "Forest"),
+  temp_C      = c(11.2, 10.8, 14.6, 15.3, 18.7, 19.4, 11.5, 14.9, 17.8, 10.5),
+  do_mg_L     = c(9.5, 9.7, 7.8, 7.2, 5.9, 5.5, 9.4, 7.5, 6.1, 9.8),
+  nitrate_mgL = c(0.15, 0.18, 1.45, 1.82, 2.35, 2.61, 0.21, 1.67, 2.14, 0.13),
+  ept_taxa    = c(18, 17, 9, 8, 4, 3, 19, 7, 5, 20)
+)
+
+stream_data</textarea>
+    <div class="code-output" data-output></div>
+  </div>
+
+  <p>The <code>ept_taxa</code> column counts the number of Ephemeroptera, Plecoptera, and Trichoptera (mayfly, stonefly, and caddisfly) taxa — a common bioindicator where higher numbers generally suggest better water quality.</p>
+
+  <h3>Inspecting a data frame</h3>
+  <p>Real datasets often have hundreds or thousands of rows, so you usually want a quick look rather than the whole thing:</p>
+
+  <div class="code-cell" data-cell-id="cell-5-2">
+    <div class="code-cell-header">
+      <span class="code-cell-label">R</span>
+      <button class="run-btn">Run</button>
+    </div>
+    <textarea class="code-editor">stream_data <- data.frame(
+  site_id     = 1:10,
+  land_use    = c("Forest", "Forest", "Pasture", "Pasture", "Urban",
+                  "Urban", "Forest", "Pasture", "Urban", "Forest"),
+  temp_C      = c(11.2, 10.8, 14.6, 15.3, 18.7, 19.4, 11.5, 14.9, 17.8, 10.5),
+  do_mg_L     = c(9.5, 9.7, 7.8, 7.2, 5.9, 5.5, 9.4, 7.5, 6.1, 9.8),
+  nitrate_mgL = c(0.15, 0.18, 1.45, 1.82, 2.35, 2.61, 0.21, 1.67, 2.14, 0.13),
+  ept_taxa    = c(18, 17, 9, 8, 4, 3, 19, 7, 5, 20)
+)
+
+head(stream_data)
+tail(stream_data, 3)
+str(stream_data)
+nrow(stream_data)
+ncol(stream_data)</textarea>
+    <div class="code-output" data-output></div>
+  </div>
+
+  <h3>Accessing columns and filtering rows</h3>
+  <p>Use the dollar sign <code>$</code> to grab a single column:</p>
+
+  <div class="code-cell" data-cell-id="cell-5-3">
+    <div class="code-cell-header">
+      <span class="code-cell-label">R</span>
+      <button class="run-btn">Run</button>
+    </div>
+    <textarea class="code-editor">stream_data <- data.frame(
+  site_id     = 1:10,
+  land_use    = c("Forest", "Forest", "Pasture", "Pasture", "Urban",
+                  "Urban", "Forest", "Pasture", "Urban", "Forest"),
+  temp_C      = c(11.2, 10.8, 14.6, 15.3, 18.7, 19.4, 11.5, 14.9, 17.8, 10.5),
+  do_mg_L     = c(9.5, 9.7, 7.8, 7.2, 5.9, 5.5, 9.4, 7.5, 6.1, 9.8),
+  nitrate_mgL = c(0.15, 0.18, 1.45, 1.82, 2.35, 2.61, 0.21, 1.67, 2.14, 0.13),
+  ept_taxa    = c(18, 17, 9, 8, 4, 3, 19, 7, 5, 20)
+)
+
+# All the temperatures
+stream_data$temp_C
+
+# Average nitrate across all sites
+mean(stream_data$nitrate_mgL)
+
+# All forest sites
+stream_data[stream_data$land_use == "Forest", ]
+
+# Urban sites with nitrate above 2 mg/L
+stream_data[stream_data$land_use == "Urban" & stream_data$nitrate_mgL > 2, ]</textarea>
+    <div class="code-output" data-output></div>
+  </div>
+
+  <p>The <code>&amp;</code> symbol means "AND" (both conditions must be true). The <code>|</code> symbol means "OR" (either can be true).</p>
+
+  <!-- Exercise 5.1 -->
+  <div class="exercise" data-exercise-id="ex-5-1">
+    <div class="exercise-header">
+      <span class="exercise-tag">Exercise 5.1</span>
+      <span class="exercise-meta">Subsetting a survey</span>
+    </div>
+    <div class="exercise-prompt">
+      <p>Using the <code>stream_data</code> data frame from the example above (you'll need to recreate it in your answer cell — code persists between runs in the same cell, but each cell starts fresh):</p>
+      <ol class="exercise-steps">
+        <li>What's the average EPT richness at just the forested sites?</li>
+        <li>How many urban sites are in the dataset?</li>
+        <li>Pull out a data frame containing only sites with temperature below 15°C.</li>
+      </ol>
+    </div>
+
+    <div class="code-cell exercise-cell" data-cell-id="ex-5-1-attempt" data-assess="ex-5-1">
+      <div class="code-cell-header">
+        <span class="code-cell-label">Your answer</span>
+        <button class="run-btn">Run</button>
+      </div>
+      <textarea class="code-editor" placeholder="# Recreate stream_data here, then write your answer…
+stream_data <- data.frame(
+  site_id     = 1:10,
+  land_use    = c('Forest', 'Forest', 'Pasture', 'Pasture', 'Urban',
+                  'Urban', 'Forest', 'Pasture', 'Urban', 'Forest'),
+  temp_C      = c(11.2, 10.8, 14.6, 15.3, 18.7, 19.4, 11.5, 14.9, 17.8, 10.5),
+  do_mg_L     = c(9.5, 9.7, 7.8, 7.2, 5.9, 5.5, 9.4, 7.5, 6.1, 9.8),
+  nitrate_mgL = c(0.15, 0.18, 1.45, 1.82, 2.35, 2.61, 0.21, 1.67, 2.14, 0.13),
+  ept_taxa    = c(18, 17, 9, 8, 4, 3, 19, 7, 5, 20)
+)
+
+# Your code below…
+"></textarea>
+      <div class="code-output" data-output></div>
+    </div>
+
+    <details class="solution">
+      <summary><span class="solution-toggle">Reveal solution</span></summary>
+      <div class="solution-body">
+        <div class="code-cell" data-cell-id="ex-5-1-sol">
+          <div class="code-cell-header">
+            <span class="code-cell-label">R · Solution</span>
+            <button class="run-btn">Run</button>
+          </div>
+          <textarea class="code-editor">stream_data <- data.frame(
+  site_id     = 1:10,
+  land_use    = c("Forest", "Forest", "Pasture", "Pasture", "Urban",
+                  "Urban", "Forest", "Pasture", "Urban", "Forest"),
+  temp_C      = c(11.2, 10.8, 14.6, 15.3, 18.7, 19.4, 11.5, 14.9, 17.8, 10.5),
+  do_mg_L     = c(9.5, 9.7, 7.8, 7.2, 5.9, 5.5, 9.4, 7.5, 6.1, 9.8),
+  nitrate_mgL = c(0.15, 0.18, 1.45, 1.82, 2.35, 2.61, 0.21, 1.67, 2.14, 0.13),
+  ept_taxa    = c(18, 17, 9, 8, 4, 3, 19, 7, 5, 20)
+)
+
+# (a)
+mean(stream_data$ept_taxa[stream_data$land_use == "Forest"])
+
+# (b)
+sum(stream_data$land_use == "Urban")
+
+# (c)
+stream_data[stream_data$temp_C < 15, ]</textarea>
+          <div class="code-output" data-output></div>
+        </div>
+        <p class="explanation"><strong>Explanation.</strong> In part (a), the inner part <code>stream_data$land_use == "Forest"</code> gives us a TRUE/FALSE vector marking which rows are forest sites. We use that to subset <code>stream_data$ept_taxa</code>, keeping only the EPT counts from forest sites. Reading from the inside out is a useful habit when code looks complicated. Notice the dramatic difference: forest sites average around 18 EPT taxa, while the urban sites average around 4 — exactly the pattern bioassessment programs are designed to detect.</p>
+      </div>
+    </details>
+  </div>
+</section>
+
+<!-- ============================================ -->
+<!-- SECTION 6 — Operators -->
+<!-- ============================================ -->
+<section id="section-6" class="chapter">
+  <div class="chapter-header">
+    <span class="chapter-number">Chapter 06</span>
+    <h2 class="chapter-title">Operators: R's Vocabulary</h2>
+  </div>
+
+  <h3>Arithmetic operators</h3>
+  <div class="code-cell" data-cell-id="cell-6-1">
+    <div class="code-cell-header">
+      <span class="code-cell-label">R</span>
+      <button class="run-btn">Run</button>
+    </div>
+    <textarea class="code-editor">10 + 3   # addition
+10 - 3   # subtraction
+10 * 3   # multiplication
+10 / 3   # division
+10 ^ 2   # exponent (10 squared)
+10 %% 3  # modulo (remainder after division)
+10 %/% 3 # integer division (drops the remainder)</textarea>
+    <div class="code-output" data-output></div>
+  </div>
+
+  <h3>Comparison operators</h3>
+  <p>These return TRUE or FALSE:</p>
+  <div class="code-cell" data-cell-id="cell-6-2">
+    <div class="code-cell-header">
+      <span class="code-cell-label">R</span>
+      <button class="run-btn">Run</button>
+    </div>
+    <textarea class="code-editor">5 > 3
+5 < 3
+5 == 5   # equal to (note the DOUBLE equals!)
+5 != 4   # not equal to
+5 >= 5
+5 <= 4</textarea>
+    <div class="code-output" data-output></div>
+  </div>
+
+  <div class="aside-note aside-warn">
+    <strong>The <code>=</code> vs <code>==</code> trap.</strong> A single <code>=</code> assigns a value (like <code>&lt;-</code>). A double <code>==</code> checks whether two things are equal. Mixing them up is the single most common beginner bug. If you see strange behavior in a filter, this is the first thing to check.
+  </div>
+
+  <h3>Logical operators</h3>
+  <div class="code-cell" data-cell-id="cell-6-3">
+    <div class="code-cell-header">
+      <span class="code-cell-label">R</span>
+      <button class="run-btn">Run</button>
+    </div>
+    <textarea class="code-editor">TRUE & FALSE   # AND: both must be TRUE
+TRUE | FALSE   # OR: at least one must be TRUE
+!TRUE          # NOT: flips TRUE to FALSE</textarea>
+    <div class="code-output" data-output></div>
+  </div>
+
+  <!-- Exercise 6.1 -->
+  <div class="exercise" data-exercise-id="ex-6-1">
+    <div class="exercise-header">
+      <span class="exercise-tag">Exercise 6.1</span>
+      <span class="exercise-meta">Compliance check</span>
+    </div>
+    <div class="exercise-prompt">
+      <p>You're screening a stream site for compliance with two water quality criteria: DO must be at least 6.0 mg/L AND temperature must be below 20°C for it to be considered suitable habitat for a sensitive coldwater species. Given the measurements below, write a single line of code that returns TRUE if the site meets both criteria and FALSE otherwise.</p>
+    </div>
+
+    <div class="code-cell exercise-cell" data-cell-id="ex-6-1-attempt" data-assess="ex-6-1">
+      <div class="code-cell-header">
+        <span class="code-cell-label">Your answer</span>
+        <button class="run-btn">Run</button>
+      </div>
+      <textarea class="code-editor">site_do <- 7.4
+site_temp <- 17.8
+
+# Your one-line answer below:
+</textarea>
+      <div class="code-output" data-output></div>
+    </div>
+
+    <details class="solution">
+      <summary><span class="solution-toggle">Reveal solution</span></summary>
+      <div class="solution-body">
+        <div class="code-cell" data-cell-id="ex-6-1-sol">
+          <div class="code-cell-header">
+            <span class="code-cell-label">R · Solution</span>
+            <button class="run-btn">Run</button>
+          </div>
+          <textarea class="code-editor">site_do <- 7.4
+site_temp <- 17.8
+
+site_do >= 6.0 & site_temp < 20</textarea>
+          <div class="code-output" data-output></div>
+        </div>
+        <p class="explanation"><strong>Explanation.</strong> A two-part water quality criterion translates directly to a logical AND. Both parts have to be true: DO at or above the minimum AND temperature below the maximum. Try changing <code>site_do</code> to 4.5, then <code>site_temp</code> to 22, and re-running to see how the result changes. This same logic pattern scales directly to filtering whole datasets — same <code>&amp;</code>, same <code>==</code>, just applied to columns instead of single values.</p>
+      </div>
+    </details>
+  </div>
+</section>
+
+<!-- ============================================ -->
+<!-- SECTION 7 — Equations -->
+<!-- ============================================ -->
+<section id="section-7" class="chapter">
+  <div class="chapter-header">
+    <span class="chapter-number">Chapter 07</span>
+    <h2 class="chapter-title">Translating Equations into Code</h2>
+  </div>
+
+  <p>Watershed ecology is full of equations — runoff models, nutrient load calculations, dilution equations, hydraulic geometry relationships. A core R skill is taking an equation off a textbook page and turning it into working code.</p>
+
+  <h3>Manning's equation for open-channel flow</h3>
+  <p class="equation-block">v = (1/n) · R<sup>2/3</sup> · S<sup>1/2</sup></p>
+  <p>where v is mean velocity (m/s), n is Manning's roughness coefficient, R is hydraulic radius (m), and S is the channel slope (m/m).</p>
+
+  <div class="code-cell" data-cell-id="cell-7-1">
+    <div class="code-cell-header">
+      <span class="code-cell-label">R</span>
+      <button class="run-btn">Run</button>
+    </div>
+    <textarea class="code-editor"># Parameters for a small cobble-bedded stream
+n <- 0.045    # Manning's n for cobble/boulder channel
+R <- 0.28     # hydraulic radius (m)
+S <- 0.012    # slope (m/m)
+
+v <- (1/n) * R^(2/3) * S^(1/2)
+v</textarea>
+    <div class="code-output" data-output></div>
+  </div>
+
+  <h3>Pollutant load calculation</h3>
+  <p class="equation-block">L = C × Q × k</p>
+  <p>where L is load (kg/day), C is concentration (mg/L), Q is discharge (m³/s), and k is the unit conversion factor 86.4.</p>
+
+  <div class="code-cell" data-cell-id="cell-7-2">
+    <div class="code-cell-header">
+      <span class="code-cell-label">R</span>
+      <button class="run-btn">Run</button>
+    </div>
+    <textarea class="code-editor">nitrate_conc <- 1.85   # mg/L
+discharge    <- 4.2    # m³/s
+k            <- 86.4   # unit conversion
+
+nitrate_load <- nitrate_conc * discharge * k
+nitrate_load   # kg N per day</textarea>
+    <div class="code-output" data-output></div>
+  </div>
+
+  <div class="aside-note">
+    <strong>Tip:</strong> When an equation has nested operations, build it up from the inside. Use parentheses generously. Always include the units in your variable names or comments — a common (and dangerous) error in watershed work is forgetting unit conversions.
+  </div>
+
+  <!-- Exercise 7.1 -->
+  <div class="exercise" data-exercise-id="ex-7-1">
+    <div class="exercise-header">
+      <span class="exercise-tag">Exercise 7.1</span>
+      <span class="exercise-meta">Streeter-Phelps</span>
+    </div>
+    <div class="exercise-prompt">
+      <p>The Streeter-Phelps deficit equation describes how dissolved oxygen recovers downstream of a pollution source. A simplified version for the DO deficit at a given travel time is:</p>
+      <p class="equation-block">D<sub>t</sub> = D<sub>0</sub> · e<sup>−k₂t</sup></p>
+      <p>where D<sub>0</sub> is the initial DO deficit (mg/L), k₂ is the reaeration rate constant (per day), and t is travel time (days). In R, <code>exp(x)</code> computes e raised to the power of x.</p>
+      <p>A point source produces an initial DO deficit of 4.5 mg/L. The stream has a reaeration rate of 0.35 per day. What is the DO deficit 3 days downstream?</p>
+    </div>
+
+    <div class="code-cell exercise-cell" data-cell-id="ex-7-1-attempt" data-assess="ex-7-1">
+      <div class="code-cell-header">
+        <span class="code-cell-label">Your answer</span>
+        <button class="run-btn">Run</button>
+      </div>
+      <textarea class="code-editor" placeholder="# Write your code here…"></textarea>
+      <div class="code-output" data-output></div>
+    </div>
+
+    <details class="solution">
+      <summary><span class="solution-toggle">Reveal solution</span></summary>
+      <div class="solution-body">
+        <div class="code-cell" data-cell-id="ex-7-1-sol">
+          <div class="code-cell-header">
+            <span class="code-cell-label">R · Solution</span>
+            <button class="run-btn">Run</button>
+          </div>
+          <textarea class="code-editor">D0 <- 4.5
+k2 <- 0.35
+t  <- 3
+
+Dt <- D0 * exp(-k2 * t)
+Dt</textarea>
+          <div class="code-output" data-output></div>
+        </div>
+        <p class="explanation"><strong>Explanation.</strong> This is a classic textbook calculation in stream chemistry. The result (~1.58 mg/L) means the deficit has decayed substantially — about two-thirds of the way back toward saturation — over those three days. Storing inputs as named variables (rather than typing the numbers directly into the equation) makes it trivial to recalculate D<sub>t</sub> for a different travel time or reaeration rate. This is also the foundation of the more complete Streeter-Phelps model that you'll see in water quality modeling courses.</p>
+      </div>
+    </details>
+  </div>
+</section>
+
+<!-- ============================================ -->
+<!-- SECTION 8 — Column Math -->
+<!-- ============================================ -->
+<section id="section-8" class="chapter">
+  <div class="chapter-header">
+    <span class="chapter-number">Chapter 08</span>
+    <h2 class="chapter-title">Calculations Across Data Frame Columns</h2>
+  </div>
+
+  <p>Because columns are vectors, you can do math across an entire column in one line — no loops needed. R automatically applies the operation row by row.</p>
+
+  <div class="code-cell" data-cell-id="cell-8-1">
+    <div class="code-cell-header">
+      <span class="code-cell-label">R</span>
+      <button class="run-btn">Run</button>
+    </div>
+    <textarea class="code-editor">stream_data <- data.frame(
+  site_id     = 1:10,
+  land_use    = c("Forest", "Forest", "Pasture", "Pasture", "Urban",
+                  "Urban", "Forest", "Pasture", "Urban", "Forest"),
+  temp_C      = c(11.2, 10.8, 14.6, 15.3, 18.7, 19.4, 11.5, 14.9, 17.8, 10.5),
+  do_mg_L     = c(9.5, 9.7, 7.8, 7.2, 5.9, 5.5, 9.4, 7.5, 6.1, 9.8),
+  nitrate_mgL = c(0.15, 0.18, 1.45, 1.82, 2.35, 2.61, 0.21, 1.67, 2.14, 0.13)
+)
+
+# Temperature in Fahrenheit
+stream_data$temp_F <- stream_data$temp_C * 9/5 + 32
+
+# DO impairment flag (TRUE if below 6 mg/L)
+stream_data$do_impaired <- stream_data$do_mg_L < 6
+
+# DO at saturation as a function of temperature (empirical formula)
+stream_data$do_sat <- 14.652 - 0.41022 * stream_data$temp_C +
+                      0.0079910 * stream_data$temp_C^2 -
+                      0.000077774 * stream_data$temp_C^3
+
+# Percent DO saturation
+stream_data$do_pct_sat <- (stream_data$do_mg_L / stream_data$do_sat) * 100
+
+stream_data</textarea>
+    <div class="code-output" data-output></div>
+  </div>
+
+  <p>In four lines of code, we computed four new variables for all ten sites at once. If the dataset had 10,000 sites, the code would be exactly the same.</p>
+
+  <!-- Exercise 8.1 -->
+  <div class="exercise" data-exercise-id="ex-8-1">
+    <div class="exercise-header">
+      <span class="exercise-tag">Exercise 8.1</span>
+      <span class="exercise-meta">SC → TDS conversion</span>
+    </div>
+    <div class="exercise-prompt">
+      <p>The Specific Conductance-Total Dissolved Solids (TDS) relationship is widely used in watershed monitoring. A common rule-of-thumb conversion is:</p>
+      <p class="equation-block">TDS (mg/L) = 0.65 × SC (μS/cm)</p>
+      <p>The EPA's general guidance is that TDS values above 500 mg/L are concerning for many beneficial uses. Using the data frame in your answer cell:</p>
+      <ol class="exercise-steps">
+        <li>Add a <code>tds_mgL</code> column with the estimated TDS for each site.</li>
+        <li>Add a <code>tds_concern</code> column that is TRUE if TDS exceeds 500 mg/L.</li>
+        <li>Filter the data frame to show only the sites of concern.</li>
+      </ol>
+    </div>
+
+    <div class="code-cell exercise-cell" data-cell-id="ex-8-1-attempt" data-assess="ex-8-1">
+      <div class="code-cell-header">
+        <span class="code-cell-label">Your answer</span>
+        <button class="run-btn">Run</button>
+      </div>
+      <textarea class="code-editor">sc_data <- data.frame(
+  site_id = 1:8,
+  reach = c("Upper", "Upper", "Mid", "Mid", "Lower", "Lower", "Trib", "Trib"),
+  sc_uScm = c(185, 210, 425, 510, 845, 920, 295, 340)
+)
+
+# Your code below…
+</textarea>
+      <div class="code-output" data-output></div>
+    </div>
+
+    <details class="solution">
+      <summary><span class="solution-toggle">Reveal solution</span></summary>
+      <div class="solution-body">
+        <div class="code-cell" data-cell-id="ex-8-1-sol">
+          <div class="code-cell-header">
+            <span class="code-cell-label">R · Solution</span>
+            <button class="run-btn">Run</button>
+          </div>
+          <textarea class="code-editor">sc_data <- data.frame(
+  site_id = 1:8,
+  reach = c("Upper", "Upper", "Mid", "Mid", "Lower", "Lower", "Trib", "Trib"),
+  sc_uScm = c(185, 210, 425, 510, 845, 920, 295, 340)
+)
+
+# (a)
+sc_data$tds_mgL <- 0.65 * sc_data$sc_uScm
+
+# (b)
+sc_data$tds_concern <- sc_data$tds_mgL > 500
+
+# (c)
+sc_data[sc_data$tds_concern, ]</textarea>
+          <div class="code-output" data-output></div>
+        </div>
+        <p class="explanation"><strong>Explanation.</strong> Each line does the calculation for every site in the dataset at once — that's vectorization at work. In part (c), we used the new logical column directly inside the brackets. The conversion factor of 0.65 is itself a simplification — the true ratio depends on the dominant ions in solution and ranges from about 0.55 (NaCl-dominated) to 0.9 (CaSO₄-dominated). A real analysis would calibrate the factor for your specific watershed.</p>
+      </div>
+    </details>
+  </div>
+</section>
+
+<!-- ============================================ -->
+<!-- SECTION 9 — For loops -->
+<!-- ============================================ -->
+<section id="section-9" class="chapter">
+  <div class="chapter-header">
+    <span class="chapter-number">Chapter 09</span>
+    <h2 class="chapter-title">For Loops: Repeating Over a Set of Values</h2>
+  </div>
+
+  <p>A <strong>for loop</strong> runs a block of code once for each item in a sequence. Use it when you know in advance what set of values you want to iterate over — a list of sites, a series of years, a vector of measurements. (Use a <em>while</em> loop, which we'll see in the next chapter, when you don't know how many iterations you'll need.)</p>
+
+  <p>The syntax reads almost like English: <code>for (each item in my_list) do something with item</code>:</p>
+
+  <div class="code-cell" data-cell-id="cell-9-1">
+    <div class="code-cell-header">
+      <span class="code-cell-label">R</span>
+      <button class="run-btn">Run</button>
+    </div>
+    <textarea class="code-editor"># Loop through the numbers 1 through 5 and print each one
+for (i in 1:5) {
+  print(i)
+}</textarea>
+    <div class="code-output" data-output></div>
+  </div>
+
+  <p>Inside the parentheses, <code>i</code> is a variable name we chose — it takes on each value of the sequence <code>1:5</code> in turn. You can name the loop variable anything you like (often <code>i</code> or <code>j</code> for indices, or something descriptive like <code>site</code> or <code>year</code>).</p>
+
+  <h3>A watershed example: looping over sites</h3>
+  <p>Suppose you have a vector of stream site names and you want to print a quick status report for each one:</p>
+
+  <div class="code-cell" data-cell-id="cell-9-2">
+    <div class="code-cell-header">
+      <span class="code-cell-label">R</span>
+      <button class="run-btn">Run</button>
+    </div>
+    <textarea class="code-editor">site_names <- c("Headwater", "Mid_reach", "Confluence", "Outlet")
+
+for (site in site_names) {
+  print(paste("Processing site:", site))
+}</textarea>
+    <div class="code-output" data-output></div>
+  </div>
+
+  <p>The loop variable <code>site</code> takes on each character string in turn. The <code>paste()</code> function glues strings together with a space between them.</p>
+
+  <h3>Building up a result inside a loop</h3>
+  <p>A common pattern is to start with an empty container, then accumulate values as the loop runs. Here we compute a running total of monthly precipitation, recording the cumulative total after each month:</p>
+
+  <div class="code-cell" data-cell-id="cell-9-3">
+    <div class="code-cell-header">
+      <span class="code-cell-label">R</span>
+      <button class="run-btn">Run</button>
+    </div>
+    <textarea class="code-editor"># Monthly precipitation (cm) for one year at a watershed
+monthly_precip <- c(8.2, 6.5, 9.1, 7.8, 5.4, 3.2,
+                    2.1, 2.9, 4.6, 7.3, 9.8, 8.7)
+
+# Pre-allocate a vector to hold the running totals
+running_total <- numeric(length(monthly_precip))
+
+# Loop through each month
+running_total[1] <- monthly_precip[1]
+for (m in 2:12) {
+  running_total[m] <- running_total[m - 1] + monthly_precip[m]
+}
+
+running_total
+paste("Annual total:", running_total[12], "cm")</textarea>
+    <div class="code-output" data-output></div>
+  </div>
+
+  <p>Notice the pattern: we initialized <code>running_total</code> as an empty numeric vector with the right length, set the first element by hand, then used the loop to fill in each subsequent element by adding the next month's precipitation to the previous total. This kind of iterative accumulation is the bread and butter of for loops.</p>
+
+  <div class="aside-note">
+    <strong>Tip — vectorization first:</strong> R's vectorized operations are usually faster and more idiomatic than loops. The example above could be written in one line as <code>running_total &lt;- cumsum(monthly_precip)</code>. For loops are still useful when each iteration depends on a previous result, when you're calling a complicated function on each item, or when you want explicit step-by-step control. As you write more R, you'll develop a feel for which approach fits the situation.
+  </div>
+
+  <!-- Exercise 9.1 -->
+  <div class="exercise" data-exercise-id="ex-9-1">
+    <div class="exercise-header">
+      <span class="exercise-tag">Exercise 9.1</span>
+      <span class="exercise-meta">Counting storm-flow days</span>
+    </div>
+    <div class="exercise-prompt">
+      <p>You have 14 days of mean daily discharge (m³/s) from a small stream:</p>
+      <p><code>discharge &lt;- c(2.1, 2.4, 8.7, 5.3, 3.2, 2.6, 2.3, 1.9, 2.0, 12.4, 7.8, 4.1, 2.5, 2.2)</code></p>
+      <p>A "storm flow day" is any day where discharge exceeds 5.0 m³/s. Use a <strong>for loop</strong> to count the number of storm-flow days. Store your answer in a variable called <code>storm_days</code> and print it.</p>
+      <p>Hint: start with <code>storm_days &lt;- 0</code>, then loop through each value in <code>discharge</code> and use an <code>if</code> statement inside the loop to check if it exceeds 5.0.</p>
+    </div>
+
+    <div class="code-cell exercise-cell" data-cell-id="ex-9-1-attempt" data-assess="ex-9-1">
+      <div class="code-cell-header">
+        <span class="code-cell-label">Your answer</span>
+        <button class="run-btn">Run</button>
+      </div>
+      <textarea class="code-editor">discharge <- c(2.1, 2.4, 8.7, 5.3, 3.2, 2.6, 2.3,
+               1.9, 2.0, 12.4, 7.8, 4.1, 2.5, 2.2)
+
+# Your for-loop here…
+</textarea>
+      <div class="code-output" data-output></div>
+    </div>
+
+    <details class="solution">
+      <summary><span class="solution-toggle">Reveal solution</span></summary>
+      <div class="solution-body">
+        <div class="code-cell" data-cell-id="ex-9-1-sol">
+          <div class="code-cell-header">
+            <span class="code-cell-label">R · Solution</span>
+            <button class="run-btn">Run</button>
+          </div>
+          <textarea class="code-editor">discharge <- c(2.1, 2.4, 8.7, 5.3, 3.2, 2.6, 2.3,
+               1.9, 2.0, 12.4, 7.8, 4.1, 2.5, 2.2)
+
+storm_days <- 0
+for (q in discharge) {
+  if (q > 5.0) {
+    storm_days <- storm_days + 1
+  }
+}
+storm_days</textarea>
+          <div class="code-output" data-output></div>
+        </div>
+        <p class="explanation"><strong>Explanation.</strong> The loop variable <code>q</code> takes on each discharge value in turn. We test each value against the threshold and increment the counter when it exceeds 5.0. Three days qualify: 8.7, 12.4, and 7.8 m³/s. As mentioned in the tip above, the vectorized one-liner <code>sum(discharge &gt; 5.0)</code> would give the same answer in less code — but the loop version makes the logic explicit, which is often what you want when teaching or debugging. As your loops get more complex (for instance, accumulating multiple statistics per site), the loop approach scales naturally; the vectorized approach can become harder to read.</p>
+      </div>
+    </details>
+  </div>
+</section>
+
+<!-- ============================================ -->
+<!-- SECTION 10 — While loops -->
+<!-- ============================================ -->
+<section id="section-10" class="chapter">
+  <div class="chapter-header">
+    <span class="chapter-number">Chapter 10</span>
+    <h2 class="chapter-title">While Loops: Repeating Until a Condition is Met</h2>
+  </div>
+
+  <p>A <strong>while loop</strong> runs a block of code repeatedly <em>as long as</em> a condition stays true. It's the right tool when you don't know in advance how many iterations you'll need — you just know when to stop.</p>
+
+  <div class="code-cell" data-cell-id="cell-10-1">
+    <div class="code-cell-header">
+      <span class="code-cell-label">R</span>
+      <button class="run-btn">Run</button>
+    </div>
+    <textarea class="code-editor"># Count from 1 to 5
+i <- 1
+while (i <= 5) {
+  print(i)
+  i <- i + 1   # IMPORTANT: update the counter or you'll loop forever!
+}</textarea>
+    <div class="code-output" data-output></div>
+  </div>
+
+  <div class="aside-note aside-warn">
+    <strong>Infinite loops:</strong> if you forget to update the variable that the condition depends on, R will run forever. If your code cell hangs, just refresh the page — the WebR engine will reset.
+  </div>
+
+  <h3>A watershed example: simulating a reservoir filling</h3>
+  <p>A small reservoir starts at 40% capacity. Inflows raise its level by 4 percentage points per day during a wet period. How many days until it reaches at least 95%?</p>
+
+  <div class="code-cell" data-cell-id="cell-10-2">
+    <div class="code-cell-header">
+      <span class="code-cell-label">R</span>
+      <button class="run-btn">Run</button>
+    </div>
+    <textarea class="code-editor">percent_full <- 40
+daily_rise <- 4
+days <- 0
+
+while (percent_full < 95) {
+  percent_full <- percent_full + daily_rise
+  days <- days + 1
+}
+
+paste("The reservoir reached", percent_full, "% capacity after", days, "days")</textarea>
+    <div class="code-output" data-output></div>
+  </div>
+
+  <!-- Exercise 10.1 -->
+  <div class="exercise" data-exercise-id="ex-10-1">
+    <div class="exercise-header">
+      <span class="exercise-tag">Exercise 10.1</span>
+      <span class="exercise-meta">First-order decay</span>
+    </div>
+    <div class="exercise-prompt">
+      <p>A closed pond receives a one-time pulse of a contaminant at a concentration of 12.0 mg/L. The contaminant decays at a first-order rate of 8% per day, meaning each day the concentration drops to 92% of its previous value. Use a while loop to determine how many days it will take for the concentration to fall below 1.0 mg/L. Print both the number of days and the final concentration.</p>
+    </div>
+
+    <div class="code-cell exercise-cell" data-cell-id="ex-10-1-attempt" data-assess="ex-10-1">
+      <div class="code-cell-header">
+        <span class="code-cell-label">Your answer</span>
+        <button class="run-btn">Run</button>
+      </div>
+      <textarea class="code-editor" placeholder="# Write your while-loop here…"></textarea>
+      <div class="code-output" data-output></div>
+    </div>
+
+    <details class="solution">
+      <summary><span class="solution-toggle">Reveal solution</span></summary>
+      <div class="solution-body">
+        <div class="code-cell" data-cell-id="ex-10-1-sol">
+          <div class="code-cell-header">
+            <span class="code-cell-label">R · Solution</span>
+            <button class="run-btn">Run</button>
+          </div>
+          <textarea class="code-editor">concentration <- 12.0
+decay_factor <- 0.92    # multiplier per day (1 - 0.08)
+days <- 0
+
+while (concentration >= 1.0) {
+  concentration <- concentration * decay_factor
+  days <- days + 1
+}
+
+paste("Concentration fell below 1.0 mg/L after", days,
+      "days. Final concentration:", round(concentration, 3), "mg/L")</textarea>
+          <div class="code-output" data-output></div>
+        </div>
+        <p class="explanation"><strong>Explanation.</strong> The structure mirrors the reservoir example, but we're shrinking a value rather than growing it. The condition <code>concentration &gt;= 1.0</code> keeps the loop running as long as the contaminant is at or above the threshold. Each iteration applies one day of first-order decay (multiplying by 0.92). The final value is slightly below 1.0 because decay happens in discrete daily steps — a useful reminder that simulations make choices about time steps. First-order decay is the most common model for contaminants in surface water.</p>
+      </div>
+    </details>
+  </div>
+</section>
+
+<!-- ============================================ -->
+<!-- SECTION 11 — Linear models -->
+<!-- ============================================ -->
+<section id="section-11" class="chapter">
+  <div class="chapter-header">
+    <span class="chapter-number">Chapter 11</span>
+    <h2 class="chapter-title">Linear Models: Fitting Relationships in Data</h2>
+  </div>
+
+  <p>A <strong>linear model</strong> describes the relationship between a response variable and one or more predictor variables. R fits linear models with the <code>lm()</code> function. The syntax <code>y ~ x</code> reads as "y is modeled as a function of x."</p>
+
+  <h3>Stage-discharge rating curve</h3>
+  <p>The relationship between stream stage and discharge typically follows a power law Q = a · h<sup>b</sup>, which becomes linear after taking logs of both sides:</p>
+  <p class="equation-block">log(Q) = log(a) + b · log(h)</p>
+
+  <div class="code-cell" data-cell-id="cell-11-1">
+    <div class="code-cell-header">
+      <span class="code-cell-label">R</span>
+      <button class="run-btn">Run</button>
+    </div>
+    <textarea class="code-editor"># Simulate 30 paired stage-discharge measurements
+set.seed(123)
+sim_stage <- runif(30, min = 0.2, max = 1.8)
+sim_q     <- 6.5 * sim_stage^2.4 * exp(rnorm(30, 0, 0.1))
+
+gauge_data <- data.frame(
+  stage_m = sim_stage,
+  q_cms   = sim_q
+)
+
+# Fit the linear model on log-transformed data
+rating_model <- lm(log(q_cms) ~ log(stage_m), data = gauge_data)
+summary(rating_model)
+
+# Back-transform coefficients
+coefs <- coef(rating_model)
+a_estimate <- exp(coefs[1])
+b_estimate <- coefs[2]
+paste("Estimated a =", round(a_estimate, 3))
+paste("Estimated b =", round(b_estimate, 3))</textarea>
+    <div class="code-output" data-output></div>
+  </div>
+
+  <!-- Exercise 11.1 -->
+  <div class="exercise" data-exercise-id="ex-11-1">
+    <div class="exercise-header">
+      <span class="exercise-tag">Exercise 11.1</span>
+      <span class="exercise-meta">Longitudinal nitrate</span>
+    </div>
+    <div class="exercise-prompt">
+      <p>You measured nitrate concentration along a longitudinal gradient downstream of an agricultural field, recording the distance (km) from the field edge and the resulting concentration (mg N/L).</p>
+      <ol class="exercise-steps">
+        <li>Combine these into a data frame called <code>gradient_data</code>.</li>
+        <li>Fit a linear model predicting nitrate from distance.</li>
+        <li>Use <code>coef()</code> to extract the slope, and interpret what it means in terms of the watershed processes acting on nitrate.</li>
+      </ol>
+    </div>
+
+    <div class="code-cell exercise-cell" data-cell-id="ex-11-1-attempt" data-assess="ex-11-1">
+      <div class="code-cell-header">
+        <span class="code-cell-label">Your answer</span>
+        <button class="run-btn">Run</button>
+      </div>
+      <textarea class="code-editor">distance_km <- c(0.1, 0.5, 1.0, 1.5, 2.0, 3.0, 4.0, 5.0)
+nitrate_mgL <- c(4.8, 4.2, 3.5, 3.1, 2.6, 1.9, 1.5, 1.1)
+
+# Your code below…
+</textarea>
+      <div class="code-output" data-output></div>
+    </div>
+
+    <details class="solution">
+      <summary><span class="solution-toggle">Reveal solution</span></summary>
+      <div class="solution-body">
+        <div class="code-cell" data-cell-id="ex-11-1-sol">
+          <div class="code-cell-header">
+            <span class="code-cell-label">R · Solution</span>
+            <button class="run-btn">Run</button>
+          </div>
+          <textarea class="code-editor">distance_km <- c(0.1, 0.5, 1.0, 1.5, 2.0, 3.0, 4.0, 5.0)
+nitrate_mgL <- c(4.8, 4.2, 3.5, 3.1, 2.6, 1.9, 1.5, 1.1)
+
+# (a)
+gradient_data <- data.frame(
+  distance = distance_km,
+  nitrate  = nitrate_mgL
+)
+
+# (b)
+nitrate_model <- lm(nitrate ~ distance, data = gradient_data)
+summary(nitrate_model)
+
+# (c)
+slope <- coef(nitrate_model)[2]
+slope</textarea>
+          <div class="code-output" data-output></div>
+        </div>
+        <p class="explanation"><strong>Explanation.</strong> The slope of approximately −0.74 means nitrate decreases by about 0.74 mg N/L for every additional kilometer downstream of the source. Biologically, this attenuation reflects a combination of in-stream processes — dilution from groundwater and tributary inputs, biological uptake by algae and biofilms, denitrification in hyporheic and riparian zones, and physical dispersion. A linear model isn't always ideal for this kind of decay (a first-order exponential decay is often more mechanistically appropriate), but for a short reach it's a reasonable first approximation.</p>
+      </div>
+    </details>
+  </div>
+</section>
+
+<!-- ============================================ -->
+<!-- SECTION 12 — Base R plotting -->
+<!-- ============================================ -->
+<section id="section-12" class="chapter">
+  <div class="chapter-header">
+    <span class="chapter-number">Chapter 12</span>
+    <h2 class="chapter-title">Plotting in Base R</h2>
+  </div>
+
+  <p>R has plotting tools built right into the language. Plots produced in code cells appear below the cell as images.</p>
+
+  <div class="code-cell" data-cell-id="cell-12-1">
+    <div class="code-cell-header">
+      <span class="code-cell-label">R</span>
+      <button class="run-btn">Run</button>
+    </div>
+    <textarea class="code-editor">set.seed(123)
+sim_stage <- runif(30, min = 0.2, max = 1.8)
+sim_q     <- 6.5 * sim_stage^2.4 * exp(rnorm(30, 0, 0.1))
+gauge_data <- data.frame(stage_m = sim_stage, q_cms = sim_q)
+
+plot(gauge_data$stage_m, gauge_data$q_cms,
+     main = "Stage-Discharge Rating Curve",
+     xlab = "Stage (m)",
+     ylab = "Discharge (m³/s)",
+     pch = 19, col = "steelblue")</textarea>
+    <div class="code-output" data-output></div>
+  </div>
+
+  <h3>Boxplots compare distributions across groups</h3>
+  <div class="code-cell" data-cell-id="cell-12-2">
+    <div class="code-cell-header">
+      <span class="code-cell-label">R</span>
+      <button class="run-btn">Run</button>
+    </div>
+    <textarea class="code-editor">stream_data <- data.frame(
+  land_use = c("Forest", "Forest", "Pasture", "Pasture", "Urban",
+               "Urban", "Forest", "Pasture", "Urban", "Forest"),
+  do_mg_L  = c(9.5, 9.7, 7.8, 7.2, 5.9, 5.5, 9.4, 7.5, 6.1, 9.8)
+)
+
+boxplot(do_mg_L ~ land_use, data = stream_data,
+        main = "Dissolved Oxygen by Land Use",
+        xlab = "Land Use",
+        ylab = "Dissolved Oxygen (mg/L)",
+        col = c("forestgreen", "khaki", "gray60"))</textarea>
+    <div class="code-output" data-output></div>
+  </div>
+
+  <!-- Exercise 12.1 -->
+  <div class="exercise" data-exercise-id="ex-12-1">
+    <div class="exercise-header">
+      <span class="exercise-tag">Exercise 12.1</span>
+      <span class="exercise-meta">Scatterplot with regression line</span>
+    </div>
+    <div class="exercise-prompt">
+      <p>Using the gradient_data from Exercise 11.1, make a scatterplot of nitrate vs. distance and add the fitted regression line using <code>abline()</code>. Hint: when both axes are on the original scale, you can pass the model directly to <code>abline()</code>.</p>
+    </div>
+
+    <div class="code-cell exercise-cell" data-cell-id="ex-12-1-attempt">
+      <div class="code-cell-header">
+        <span class="code-cell-label">Your answer</span>
+        <button class="run-btn">Run</button>
+      </div>
+      <textarea class="code-editor">distance_km <- c(0.1, 0.5, 1.0, 1.5, 2.0, 3.0, 4.0, 5.0)
+nitrate_mgL <- c(4.8, 4.2, 3.5, 3.1, 2.6, 1.9, 1.5, 1.1)
+gradient_data <- data.frame(distance = distance_km, nitrate = nitrate_mgL)
+nitrate_model <- lm(nitrate ~ distance, data = gradient_data)
+
+# Your plot code below…
+</textarea>
+      <div class="code-output" data-output></div>
+    </div>
+
+    <details class="solution">
+      <summary><span class="solution-toggle">Reveal solution</span></summary>
+      <div class="solution-body">
+        <div class="code-cell" data-cell-id="ex-12-1-sol">
+          <div class="code-cell-header">
+            <span class="code-cell-label">R · Solution</span>
+            <button class="run-btn">Run</button>
+          </div>
+          <textarea class="code-editor">distance_km <- c(0.1, 0.5, 1.0, 1.5, 2.0, 3.0, 4.0, 5.0)
+nitrate_mgL <- c(4.8, 4.2, 3.5, 3.1, 2.6, 1.9, 1.5, 1.1)
+gradient_data <- data.frame(distance = distance_km, nitrate = nitrate_mgL)
+nitrate_model <- lm(nitrate ~ distance, data = gradient_data)
+
+plot(gradient_data$distance, gradient_data$nitrate,
+     main = "Downstream Attenuation of Nitrate",
+     xlab = "Distance from Source (km)",
+     ylab = "Nitrate (mg N/L)",
+     pch = 19, col = "darkgreen")
+abline(nitrate_model, col = "red", lwd = 2)</textarea>
+          <div class="code-output" data-output></div>
+        </div>
+        <p class="explanation"><strong>Explanation.</strong> <code>abline()</code> automatically extracts the intercept and slope from a one-predictor model and draws the line. This wouldn't work for a log-log model because the line is straight only on the log scale — there you'd use <code>predict()</code> and <code>lines()</code> instead.</p>
+      </div>
+    </details>
+  </div>
+</section>
+
+<!-- ============================================ -->
+<!-- SECTION 13 — ggplot2 -->
+<!-- ============================================ -->
+<section id="section-13" class="chapter">
+  <div class="chapter-header">
+    <span class="chapter-number">Chapter 13</span>
+    <h2 class="chapter-title">Plotting in ggplot2</h2>
+  </div>
+
+  <p><code>ggplot2</code> uses a layered approach — you start with a blank canvas, map data to visual elements, then add geoms (points, lines, bars), labels, and themes with the <code>+</code> operator.</p>
+
+  <div class="code-cell" data-cell-id="cell-13-1">
+    <div class="code-cell-header">
+      <span class="code-cell-label">R</span>
+      <button class="run-btn">Run</button>
+    </div>
+    <textarea class="code-editor">library(ggplot2)
+
+stream_data <- data.frame(
+  land_use    = c("Forest", "Forest", "Pasture", "Pasture", "Urban",
+                  "Urban", "Forest", "Pasture", "Urban", "Forest"),
+  nitrate_mgL = c(0.15, 0.18, 1.45, 1.82, 2.35, 2.61, 0.21, 1.67, 2.14, 0.13),
+  ept_taxa    = c(18, 17, 9, 8, 4, 3, 19, 7, 5, 20)
+)
+
+ggplot(stream_data, aes(x = nitrate_mgL, y = ept_taxa, color = land_use)) +
+  geom_point(size = 4) +
+  labs(
+    title = "EPT Richness Declines with Nitrate Enrichment",
+    x = "Nitrate (mg N/L)",
+    y = "EPT Taxa Richness",
+    color = "Land Use"
+  ) +
+  theme_minimal()</textarea>
+    <div class="code-output" data-output></div>
+  </div>
+
+  <div class="aside-note">
+    <strong>Inside <code>aes()</code> vs outside:</strong> use <code>aes()</code> for data-driven aesthetics (color = a column), and put fixed values like <code>color = "steelblue"</code> outside. This trips up everyone at first.
+  </div>
+
+  <!-- Exercise 13.1 -->
+  <div class="exercise" data-exercise-id="ex-13-1">
+    <div class="exercise-header">
+      <span class="exercise-tag">Exercise 13.1</span>
+      <span class="exercise-meta">ggplot scatter with smoother</span>
+    </div>
+    <div class="exercise-prompt">
+      <p>Using <code>gradient_data</code>, make a ggplot scatterplot of nitrate (y) vs. distance (x), add a linear smoother with <code>geom_smooth(method = "lm")</code>, and include an informative title and axis labels with units.</p>
+    </div>
+
+    <div class="code-cell exercise-cell" data-cell-id="ex-13-1-attempt">
+      <div class="code-cell-header">
+        <span class="code-cell-label">Your answer</span>
+        <button class="run-btn">Run</button>
+      </div>
+      <textarea class="code-editor">library(ggplot2)
+
+distance_km <- c(0.1, 0.5, 1.0, 1.5, 2.0, 3.0, 4.0, 5.0)
+nitrate_mgL <- c(4.8, 4.2, 3.5, 3.1, 2.6, 1.9, 1.5, 1.1)
+gradient_data <- data.frame(distance = distance_km, nitrate = nitrate_mgL)
+
+# Your ggplot code below…
+</textarea>
+      <div class="code-output" data-output></div>
+    </div>
+
+    <details class="solution">
+      <summary><span class="solution-toggle">Reveal solution</span></summary>
+      <div class="solution-body">
+        <div class="code-cell" data-cell-id="ex-13-1-sol">
+          <div class="code-cell-header">
+            <span class="code-cell-label">R · Solution</span>
+            <button class="run-btn">Run</button>
+          </div>
+          <textarea class="code-editor">library(ggplot2)
+
+distance_km <- c(0.1, 0.5, 1.0, 1.5, 2.0, 3.0, 4.0, 5.0)
+nitrate_mgL <- c(4.8, 4.2, 3.5, 3.1, 2.6, 1.9, 1.5, 1.1)
+gradient_data <- data.frame(distance = distance_km, nitrate = nitrate_mgL)
+
+ggplot(gradient_data, aes(x = distance, y = nitrate)) +
+  geom_point(color = "darkgreen", size = 4) +
+  geom_smooth(method = "lm", color = "firebrick", fill = "mistyrose") +
+  labs(
+    title = "Downstream Attenuation of Nitrate",
+    x = "Distance from Source (km)",
+    y = "Nitrate (mg N/L)"
+  ) +
+  theme_minimal()</textarea>
+          <div class="code-output" data-output></div>
+        </div>
+        <p class="explanation"><strong>Explanation.</strong> ggplot2 gives us a confidence ribbon "for free" and cleaner default styling. Most watershed and aquatic ecology articles you'll read in 2026 use ggplot2 — it's worth the investment to learn it well. Always specify whether you mean mg-N/L (just the nitrogen) or mg-NO₃/L (the whole molecule) — they differ by a factor of 4.4.</p>
+      </div>
+    </details>
+  </div>
+</section>
+
+<!-- ============================================ -->
+<!-- SECTION 14 — Capstone -->
+<!-- ============================================ -->
+<section id="section-14" class="chapter">
+  <div class="chapter-header">
+    <span class="chapter-number">Chapter 14</span>
+    <h2 class="chapter-title">Putting It All Together</h2>
+  </div>
+
+  <p>Let's combine everything you've learned into a mini analysis. We'll simulate a synoptic stream survey, compute derived metrics, fit a stressor-response model, and visualize the results.</p>
+
+  <div class="code-cell" data-cell-id="cell-13-1">
+    <div class="code-cell-header">
+      <span class="code-cell-label">R · Capstone</span>
+      <button class="run-btn">Run</button>
+    </div>
+    <textarea class="code-editor">library(ggplot2)
+
+# 1. Simulate 50 stream sites across a gradient of agricultural cover
+set.seed(2026)
+n_sites <- 50
+
+watershed_survey <- data.frame(
+  site_id = 1:n_sites,
+  pct_ag  = round(runif(n_sites, 0, 90), 1),
+  temp_C  = round(rnorm(n_sites, mean = 14, sd = 3), 1)
+)
+
+# 2. Nitrate increases with agricultural cover
+watershed_survey$nitrate_mgL <- round(
+  0.3 + 0.05 * watershed_survey$pct_ag + rnorm(n_sites, 0, 0.6), 2
+)
+watershed_survey$nitrate_mgL <- pmax(watershed_survey$nitrate_mgL, 0.05)
+
+# 3. EPT richness declines with nitrate
+watershed_survey$ept_taxa <- round(
+  pmax(20 - 4 * watershed_survey$nitrate_mgL + rnorm(n_sites, 0, 2), 0)
+)
+
+# 4. Flag sites of concern with a while loop
+i <- 1
+flagged_count <- 0
+while (i <= nrow(watershed_survey)) {
+  if (watershed_survey$nitrate_mgL[i] > 2 & watershed_survey$ept_taxa[i] < 8) {
+    flagged_count <- flagged_count + 1
+  }
+  i <- i + 1
+}
+print(paste("Flagged", flagged_count, "sites of concern"))
+
+# 5. Fit stressor-response model
+ept_model <- lm(ept_taxa ~ nitrate_mgL, data = watershed_survey)
+slope <- coef(ept_model)[2]
+
+# 6. Visualize
+ggplot(watershed_survey, aes(x = nitrate_mgL, y = ept_taxa, color = pct_ag)) +
+  geom_point(size = 3, alpha = 0.8) +
+  geom_smooth(method = "lm", color = "black", fill = "gray80") +
+  scale_color_viridis_c(name = "% Agricultural\nCover") +
+  labs(
+    title = "Macroinvertebrate Community Response to Nitrate",
+    subtitle = paste("Slope =", round(slope, 2),
+                     "EPT taxa lost per mg/L | n =", nrow(watershed_survey)),
+    x = "Nitrate (mg N/L)",
+    y = "EPT Taxa Richness"
+  ) +
+  theme_minimal()</textarea>
+    <div class="code-output" data-output></div>
+  </div>
+
+  <p>This 30-line analysis touches every concept from the guide: variables, vectors, data frames, operators, equations, column-wise math, while loops, linear models, and plotting. Real watershed analyses are just longer versions of this same pattern — and the stressor-response framework you see here is essentially the foundation of state and federal bioassessment programs.</p>
+</section>
+
+<!-- ============================================ -->
+<!-- SECTION 15 — Where to Go Next -->
+<!-- ============================================ -->
+<section id="section-15" class="chapter">
+  <div class="chapter-header">
+    <span class="chapter-number">Chapter 15</span>
+    <h2 class="chapter-title">Where to Go Next</h2>
+  </div>
+
+  <div class="next-grid">
+    <div class="next-card">
+      <p class="next-card-tag">Tidyverse</p>
+      <h4>dplyr + ggplot2</h4>
+      <p>The <code>dplyr</code> package makes data manipulation much cleaner than base R brackets. Pair it with ggplot2 and you have the most common modern analysis workflow.</p>
+    </div>
+    <div class="next-card">
+      <p class="next-card-tag">USGS Data</p>
+      <h4>dataRetrieval</h4>
+      <p>Connects directly to NWIS and the Water Quality Portal — pull discharge records and water quality samples for any USGS gauge with a single function call.</p>
+    </div>
+    <div class="next-card">
+      <p class="next-card-tag">Spatial</p>
+      <h4>sf + terra</h4>
+      <p><code>sf</code> handles vector GIS data (watershed boundaries, stream networks); <code>terra</code> handles rasters (DEMs, NLCD). Together they make R a capable GIS.</p>
+    </div>
+    <div class="next-card">
+      <p class="next-card-tag">Modeling</p>
+      <h4>nls + lme4</h4>
+      <p><code>nls()</code> for nonlinear regression (decay curves, hydrograph recessions); <code>lme4</code> or <code>glmmTMB</code> for mixed-effects models with nested data.</p>
+    </div>
+  </div>
+
+  <div class="closing">
+    <p class="closing-mark">⌘</p>
+    <p class="closing-text">Programming is a skill that rewards practice far more than it rewards reading. Open RStudio, type the examples in this document yourself, change the numbers, break things, and fix them. After a few weeks of regular use, R will feel less like a foreign language and more like a tool you reach for instinctively whenever data shows up.</p>
+    <p class="closing-sig">— Welcome to watershed science in the modern age.</p>
+  </div>
+</section>
+
+</main>
+</div>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <p class="footer-credit">An interactive R tutorial · Watershed Ecology · Built with <a href="https://docs.r-wasm.org/webr/latest/" target="_blank" rel="noopener">WebR</a></p>
+    <p class="footer-license">Course material — adapt freely for non-commercial educational use.</p>
+  </div>
+</footer>
+
+<script src="./js/main.js"></script>
+</body>
+</html>
