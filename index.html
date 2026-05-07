@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Introduction to R for Watershed Ecology</title>
-<meta name="description" content="A hands-on, interactive R guide for watershed ecology. Learn variables, data frames, linear models, and ggplot2 with stream-based examples." />
+<meta name="description" content="A hands-on, interactive R guide for watershed ecology. Learn variables, data frames, linear models, and ggplot2 in a watershed ecological context." />
 <link rel="icon" href="./img/R-Intro-logo.png" />
 
 <!-- Fonts: a distinctive editorial pairing -->
@@ -25,6 +25,9 @@
 <!-- Assessment specifications (plain script — loads even if WebR fails) -->
 <script src="./js/assessments.js"></script>
 
+<!-- R Markdown export — turns the page into a downloadable .Rmd document -->
+<script src="./js/rmd-export.js"></script>
+
 <!-- WebR for in-browser R execution -->
 <script type="module" src="./js/runner.js"></script>
 
@@ -41,7 +44,7 @@
     <div class="hero-meta">
       <span class="meta-tag">Field Manual</span>
       <span class="meta-divider">·</span>
-      <span class="meta-tag">v1.02</span>
+      <span class="meta-tag">v2.00</span>
       <span class="meta-divider">·</span>
       <span class="meta-tag">Watershed Ecology</span>
     </div>
@@ -53,6 +56,9 @@
     <div class="hero-actions">
       <a class="btn-primary" href="#section-1">Begin reading <span aria-hidden="true">→</span></a>
       <a class="btn-secondary" href="#about">About this guide</a>
+      <button class="btn-tertiary" data-rmd-download type="button" title="Download an R Markdown (.Rmd) version of this guide for offline practice">
+        <span class="btn-tertiary-icon" aria-hidden="true">↓</span> Download as R Markdown
+      </button>
     </div>
   </div>
   <svg class="hero-stream" viewBox="0 0 1200 220" preserveAspectRatio="none" aria-hidden="true">
@@ -116,13 +122,13 @@
   <h2 class="about-title">How to use this guide</h2>
   <div class="about-grid">
     <div>
-      <p class="about-step"><span class="about-step-num">1</span> Each chapter introduces one self-contained concept with worked examples in code blocks. Click <strong>Run</strong> to execute the code — the output appears below the cell.</p>
+      <p class="about-step"><span class="about-step-num">1</span> Each chapter introduces one concept with self-contained examples in code blocks. Click <strong>Run</strong> to execute the code — the output appears below the cell.</p>
     </div>
     <div>
       <p class="about-step"><span class="about-step-num">2</span> Every exercise has an empty editor where you write your own code. Use <strong>Just run</strong> to test how it behaves, or <strong>Run &amp; check</strong> to find out whether your answer is correct.</p>
     </div>
     <div>
-      <p class="about-step"><span class="about-step-num">3</span> Click <strong>Reveal solution</strong> when you're ready to compare. Try the exercise yourself first — that's where the learning happens.</p>
+      <p class="about-step"><span class="about-step-num">3</span> Click <strong>Reveal solution</strong> when you're ready to compare. Try the exercise yourself first!</p>
     </div>
   </div>
   <p class="about-note">⚠️ A note on errors: you <em>will</em> get error messages, and that's normal. Read them carefully — they're R telling you exactly where it got confused. Common culprits: a missing parenthesis, a typo, or forgetting a comma.</p>
@@ -146,10 +152,10 @@
 
   <p><strong>Right here in your browser.</strong> Every gray code cell on this page is a tiny live R session. Click <strong>Run</strong> and the code executes immediately, with output shown below the cell. You don't have to install anything. This is great for learning the language and working through this guide.</p>
 
-  <p><strong>On your own computer with R + RStudio.</strong> For real coursework — projects, assignments, research — you'll want R installed locally so you can save your work, manage data files, and use the full ecosystem of R packages. The rest of this chapter walks you through installing both pieces and explains how the desktop environment compares to the in-browser cells you'll use here.</p>
+  <p><strong>On your own computer with R and RStudio.</strong> For real work — projects, assignments, research — you'll want R installed locally so you can save your work, manage data files, and use the full suite of R packages. The rest of this chapter walks you through installing both pieces and explains how the desktop environment compares to the in-browser cells you'll use here.</p>
 
   <h3>Installing R and RStudio</h3>
-  <p>You need <strong>two</strong> separate downloads. R is the language itself. RStudio is the editor (the "integrated development environment," or IDE) you use to write and run R code. Install R first, then RStudio.</p>
+  <p>You need <strong>two</strong> separate downloads. R is the language itself. RStudio is the editor you use to write and run R code. Install R first, then RStudio.</p>
 
   <h4>Step 1 — Install R</h4>
   <p>Go to <a href="https://cran.r-project.org/" target="_blank" rel="noopener">cran.r-project.org</a> (the Comprehensive R Archive Network). Pick the link that matches your operating system:</p>
@@ -173,14 +179,17 @@
     <figcaption>Screenshot of RStudio's four-pane layout</figcaption>
   </figure>
 
-  <p>Each pane has a job. Here's what they do, starting in the top-left and moving clockwise:</p>
+  <p>Each pane has a distinct job. Here's what they do:</p>
 
   <ol class="rstudio-panes">
     <li>
-      <strong>Source editor (top-left)</strong> — where you write and save R scripts. A script is just a text file ending in <code>.R</code> that contains R code. You type code here and run it line-by-line (with <kbd>Ctrl</kbd>+<kbd>Enter</kbd> on Windows/Linux, <kbd>Cmd</kbd>+<kbd>Return</kbd> on Mac), or run the whole script at once. This is the equivalent of the <strong>code cells</strong> on this webpage — except that on your computer your scripts persist between sessions, you can have many of them open as tabs, and you can organize them into project folders.
+      <strong>Source editor (top-left)</strong> — where you write and save R scripts. A script is just a text file ending in <code>.R</code> that contains R code. You type code here and run it line-by-line (with <kbd>Ctrl</kbd>+<kbd>Enter</kbd> on Windows/Linux, <kbd>Cmd</kbd>+<kbd>Return</kbd> on Mac), or run the whole script at once.
     </li>
     <li>
-      <strong>Environment / History (top-right)</strong> — shows everything currently in memory. Variables, vectors, data frames you've created — all listed here with their values or dimensions. Think of it as a live inventory of your R session. Clicking a data frame opens it in a spreadsheet-style viewer, which is enormously helpful for inspecting watershed datasets. The History tab shows every command you've ever typed in the current session.
+      <strong>Environment / History (top-right)</strong> — shows everything currently in memory. Variables, vectors, data frames you've created — all listed here with their values or dimensions. Think of it as a live inventory of your R session. Clicking a data frame opens it in a spreadsheet-style viewer, which is really helpful for inspecting datasets. The History tab shows every command you've ever typed in the current session.
+    </li>
+    <li>
+      <strong>Console (bottom-left)</strong> — the live R prompt. Anything you type here is executed immediately and the result appears right below. The console is what's actually running your R commands; the Source editor pane is just a place to write code that you then send to the console. When you click "Run" on a code cell on this webpage, you can think of it as sending that cell's contents to a hidden console.
     </li>
     <li>
       <strong>Files / Plots / Help / Packages / Viewer (bottom-right)</strong> — a multi-purpose pane.
@@ -191,9 +200,6 @@
         <li><em>Packages</em> lists installed packages and lets you install new ones.</li>
         <li><em>Viewer</em> shows HTML output (knit reports, interactive widgets).</li>
       </ul>
-    </li>
-    <li>
-      <strong>Console (bottom-left)</strong> — the live R prompt. Anything you type here is executed immediately and the result appears right below. The console is what's actually running your R commands; the Source editor pane is just a place to write code that you then send to the console. When you click "Run" on a code cell on this webpage, you can think of it as sending that cell's contents to a hidden console.
     </li>
   </ol>
 
@@ -229,14 +235,14 @@
   <p>With this structure and a project file, references like <code>read.csv("data/nitrate.csv")</code> work the same on your laptop, your collaborator's laptop, and the lab computer. No absolute paths needed.</p>
 
   <h3>The R authoring environment</h3>
-  <p>So far we've talked about R (the language) and RStudio (the editor). But when you start writing real analyses, you'll encounter a few more terms: <strong>IDE</strong>, <strong>.R scripts</strong>, and <strong>R Markdown / Quarto documents</strong>. These are the three things that make up your day-to-day R workflow, and it's worth a quick tour before we head into the actual coding chapters.</p>
+  <p>So far we've talked about R (the language) and RStudio (the editor). But when you start writing real analyses, you'll encounter a few more terms: <strong>IDE</strong>, <strong>R scripts</strong>, and <strong>R Markdown / Quarto documents</strong>. These are the three things that make up your day-to-day R workflow, and it's worth a quick tour before we head into the actual coding chapters.</p>
 
   <h4>RStudio is an IDE</h4>
   <p>RStudio is what's called an <strong>integrated development environment</strong>, or IDE for short. The name is more intimidating than the idea: an IDE is just a single application that bundles together the tools you need to write code. You've already seen the four panes — the source editor, the console, the environment viewer, and the files/plots/help pane. Each of those is a separate tool, but RStudio integrates them into one window so you don't have to juggle multiple programs.</p>
 
   <p>Other languages have their own IDEs (VS Code, PyCharm, Eclipse, Xcode). For R, the dominant choice is RStudio. You could write R code in any plain text editor and run it from a terminal, but RStudio's tight integration of the console, plots, and help pages makes it dramatically more pleasant.</p>
 
-  <h4>.R scripts: the standard file format</h4>
+  <h4>R scripts: the standard file format</h4>
   <p>An <strong>R script</strong> is a plain text file with the extension <code>.R</code>. It contains nothing but R code (and comments). When you run a script, R executes the lines from top to bottom as if you'd typed them into the console one at a time. Here's what a small script might look like:</p>
 
   <div class="code-cell" data-cell-id="cell-1-script">

@@ -220,6 +220,42 @@ code {
   color: var(--paper);
 }
 
+/* Tertiary button — quieter link-style action for secondary affordances
+   like the R Markdown download. Sits next to primary/secondary in the
+   hero without competing visually for the primary CTA. */
+.btn-tertiary {
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  padding: 0.85rem 0.5rem;
+  background: transparent;
+  color: var(--ink-soft);
+  border: none;
+  border-bottom: 1px solid transparent;
+  border-radius: 0;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  transition: color 0.15s ease, border-color 0.15s ease;
+  text-decoration: none;
+}
+.btn-tertiary:hover {
+  color: var(--water-deep);
+  border-bottom-color: var(--water-mid);
+}
+.btn-tertiary:focus-visible {
+  outline: 2px solid var(--water-mid);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+.btn-tertiary-icon {
+  font-weight: 600;
+  font-size: 1.05em;
+  line-height: 1;
+}
+
 .hero-stream {
   position: absolute;
   bottom: 0;
