@@ -318,15 +318,15 @@ ggplot(gradient_data, aes(x = distance, y = nitrate)) +
 <section id="section-2" class="chapter">
   <div class="chapter-header">
     <span class="chapter-number">Chapter 02</span>
-    <h2 class="chapter-title">Terminology: Code, Functions, and Operators</h2>
+    <h2 class="chapter-title">Terminology</h2>
   </div>
 
-  <p>Before you write your first line of R, a few vocabulary words will save you a lot of confusion. This short chapter introduces the four terms — <strong>code</strong>, <strong>comments</strong>, <strong>functions</strong>, and <strong>operators</strong> — that show up on every page of this guide. Once these click, the rest of the syntax stops looking like a foreign language.</p>
+  <p>Before you write your first line of R, a few vocabulary words will save you a lot of confusion. This short chapter introduces four terms — <strong>code</strong>, <strong>comments</strong>, <strong>functions</strong>, and <strong>operators</strong> — that show up on every page of this guide.</p>
 
   <h3>Code</h3>
-  <p><strong>Code</strong> is just text — instructions written for the computer to follow. Each line tells R to do something specific. R reads your code top to bottom, one line at a time, and does exactly what you say. There's no magic; if R does something unexpected, it's because the code <em>told</em> it to. Reading the line carefully is almost always the first step in fixing a bug.</p>
+  <p><strong>Code</strong> is just text — instructions written for the computer to follow. Each line tells R to do something specific. R reads your code top to bottom, one line at a time, and does exactly what you say. There's no magic; if R does something unexpected, it's because the code <em>told</em> it to. Reading the line carefully is almost always the first step in fixing a bug (or, error in the code).</p>
 
-  <p>Lines that start with <code>#</code> are <strong>comments</strong> — notes for humans that R ignores completely. Comments are how you explain to your future self (or a classmate) what your code is doing:</p>
+  <p>Lines that start with <code>#</code> are <strong>comments</strong> — notes for humans that R ignores completely. Comments are how you explain to your future self (or a classmate/professor/collaborator) what your code is doing:</p>
 
   <div class="code-cell" data-cell-id="cell-2-1">
     <div class="code-cell-header">
@@ -356,9 +356,11 @@ round(3.14159, 2)   # input: a number and a digit count; output: 3.14</textarea>
     <div class="code-output" data-output></div>
   </div>
 
-  <p>The parentheses are essential. <code>sqrt(16)</code> calls the function on 16, but <code>sqrt</code> by itself just refers to the function as an object — like saying the word "calculator" instead of actually using one. Forgetting parentheses, or having them in the wrong place, is the single most common source of beginner errors. If R gives you a confusing message, count your parentheses first.</p>
+  <p>The parentheses are essential. <code>sqrt(16)</code> calls the function on 16, but <code>sqrt</code> by itself just refers to the function as an object — like saying the word "calculator" instead of actually using one. Forgetting parentheses, or having them in the wrong place, is a common source of error for beginners.</p>
 
   <p>You'll see this same pattern everywhere in R. <code>mean(x)</code> takes a vector <code>x</code> and gives back its average. <code>length(x)</code> gives you how many items are in <code>x</code>. <code>read.csv("nitrate.csv")</code> reads a CSV file. The pattern is always <em>function-name</em> followed by parentheses around the input.</p>
+
+  <p>An argument is not always required for every function (e.g., <code>getwd()</code> is a function that returns your current working directory). Sometimes arguments have default values, so you don't have to specify them each time. If you're curious about the arguments a function accepts, you can use the help function <code>?function_name</code> to view its documentation.</p>
 
   <h3>Operators</h3>
   <p>An <strong>operator</strong> is a special shortcut symbol that acts like a tiny function. You've used them in math your whole life: <code>+</code>, <code>-</code>, <code>*</code>, <code>/</code>. R has the same arithmetic operators, plus a few R-specific ones like <code>&lt;-</code> (used to store values in variables, which we'll see in the next chapter) and <code>==</code> (which checks whether two things are equal).</p>
@@ -379,7 +381,7 @@ round(3.14159, 2)   # input: a number and a digit count; output: 3.14</textarea>
 
   <p>A <strong>variable</strong> is a named container that holds a value. Once you store something in a variable, you can refer to it by name in later calculations. This saves typing and makes your code easier to read.</p>
 
-  <p>In R, we assign values using the arrow operator <code>&lt;-</code>. Read it as "gets":</p>
+  <p>In R, we assign values using the arrow operator <code>&lt;-</code> or the equals sign <code>=</code>. Read them as "gets":</p>
 
   <div class="code-cell" data-cell-id="cell-3-1">
     <div class="code-cell-header">
@@ -393,7 +395,7 @@ discharge_cms <- 2.34
 stream_name <- "Bear Creek"
 
 # Store a count of macroinvertebrate taxa observed
-taxa_richness <- 23
+taxa_richness = 23
 
 # To see what's in a variable, just type its name
 discharge_cms
@@ -518,7 +520,7 @@ length(do_mg_L)</textarea>
   </div>
 
   <div class="aside-note">
-    <strong>⚠ Watch out:</strong> <code>length()</code> here means the number of items in the vector, not stream length. R uses the word in the general sense.
+    <strong>⚠ Watch out:</strong> <code>length()</code> here means the number of items in the vector. R uses the word in the general sense.
   </div>
 
   <h3>Pulling out specific values</h3>
@@ -794,9 +796,7 @@ stream_data[stream_data$temp_C < 15, ]</textarea>
 10 - 3   # subtraction
 10 * 3   # multiplication
 10 / 3   # division
-10 ^ 2   # exponent (10 squared)
-10 %% 3  # modulo (remainder after division)
-10 %/% 3 # integer division (drops the remainder)</textarea>
+10 ^ 2   # exponent (10 squared)</textarea>
     <div class="code-output" data-output></div>
   </div>
 
@@ -817,7 +817,7 @@ stream_data[stream_data$temp_C < 15, ]</textarea>
   </div>
 
   <div class="aside-note aside-warn">
-    <strong>The <code>=</code> vs <code>==</code> trap.</strong> A single <code>=</code> assigns a value (like <code>&lt;-</code>). A double <code>==</code> checks whether two things are equal. Mixing them up is the single most common beginner bug. If you see strange behavior in a filter, this is the first thing to check.
+    <strong>The <code>=</code> vs <code>==</code> trap.</strong> Remember that a single <code>=</code> assigns a value (Chapter 03)!
   </div>
 
   <h3>Logical operators</h3>
