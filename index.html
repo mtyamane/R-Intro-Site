@@ -262,10 +262,10 @@ sd(nitrate)</textarea>
     <div class="code-output" data-output></div>
   </div>
 
-  <p>Scripts are the right tool when your output <em>is</em> the analysis itself — a script that loads data, fits a model, and saves a figure to disk. They're the workhorses of reproducible research: anyone with the same data can run your <code>.R</code> file and get the same results. Most published analysis pipelines are built from one or more <code>.R</code> scripts.</p>
+  <p>Scripts are the right tool when your output <em>is</em> the analysis itself — a script that loads data, fits a model, and saves a figure to disk. They're the workhorses of reproducible research: anyone with the same data can run your <code>.R</code> file and get the same results. Most published analysis pipelines are built from one or more R scripts.</p>
 
   <h4>R Markdown and Quarto: writing with code</h4>
-  <p>Sometimes the deliverable isn't just the analysis but a <em>document</em> — a lab report, a methods write-up, a thesis chapter. For these, plain <code>.R</code> scripts aren't quite right because you also want explanations, headings, equations, figures, and tables, all woven together with the code that produced them.</p>
+  <p>Sometimes the deliverable isn't just the analysis but a <em>document</em> — a lab report, a methods write-up, a thesis chapter. For these, plain R scripts aren't quite right because you also want explanations, headings, equations, figures, and tables, all woven together with the code that produced them.</p>
 
   <p>That's what <strong>R Markdown</strong> (<code>.Rmd</code> files) and <strong>Quarto</strong> (<code>.qmd</code> files) are for. They're two closely-related formats — Quarto is Posit's newer, more flexible successor to R Markdown — that let you mix writing and code in one file. Quarto is increasingly the modern default, but the two work so similarly that you can treat them as one topic for now. We'll just call them "Rmd/Quarto" here.</p>
 
@@ -309,7 +309,7 @@ ggplot(gradient_data, aes(x = distance, y = nitrate)) +
     <li><strong>Speed.</strong> The browser version downloads R-compiled-to-WebAssembly the first time you visit, which takes ~30 seconds. R running locally through RStudio is at native speed once installed.</li>
   </ul>
 
-  <p>The code cells here are good enough to work through this guide — you can focus on learning R without worrying about installation, file paths, or knitting. Once you're ready to do your own analyses, you'll likely use <code>.R</code> scripts for the analysis itself and <code>.Rmd</code>/<code>.qmd</code> documents to write up the results. The beauty is that the R syntax you learn here works identically in all three.</p>
+  <p>The code cells here are good enough to work through this guide — you can focus on learning R without worrying about installation, file paths, or knitting. Once you're ready to do your own analyses, you'll likely use R scripts for the analysis itself and <code>.Rmd</code>/<code>.qmd</code> documents to write up the results. The beauty is that the R syntax you learn here works identically in all three.</p>
 </section>
 
 <!-- ============================================ -->
@@ -580,8 +580,8 @@ do_mg_L[do_mg_L < 6]</textarea>
       <p>You measured nitrate concentrations (mg N/L) at 10 sites across an agricultural watershed: 0.42, 1.85, 0.31, 2.94, 1.12, 0.58, 3.21, 0.27, 2.05, 1.43.</p>
       <ol class="exercise-steps">
         <li>Store these in a vector called <code>nitrate</code>.</li>
-        <li>Calculate the mean and standard deviation.</li>
-        <li>The EPA recommends a threshold of 1.0 mg/L for ecologically meaningful nitrate enrichment. How many sites exceeded this threshold?</li>
+        <li>Store the mean in <code>nitrate_mean</code> and the standard deviation in <code>nitrate_sd</code>.</li>
+        <li>The EPA recommends a threshold of 1.0 mg/L for ecologically meaningful nitrate enrichment. Store the number of sites exceeding this threshold in <code>n_high</code>.</li>
       </ol>
     </div>
 
@@ -606,11 +606,14 @@ do_mg_L[do_mg_L < 6]</textarea>
 nitrate <- c(0.42, 1.85, 0.31, 2.94, 1.12, 0.58, 3.21, 0.27, 2.05, 1.43)
 
 # (b)
-mean(nitrate)
-sd(nitrate)
+nitrate_mean <- mean(nitrate)
+nitrate_sd   <- sd(nitrate)
+nitrate_mean
+nitrate_sd
 
 # (c)
-sum(nitrate > 1.0)</textarea>
+n_high <- sum(nitrate > 1.0)
+n_high</textarea>
           <div class="code-output" data-output></div>
         </div>
         <p class="explanation"><strong>Explanation.</strong> Part (c) uses a clever trick. The expression <code>nitrate &gt; 1.0</code> returns a vector of TRUE/FALSE values — one for each site. When you call <code>sum()</code> on logical values, R counts the TRUEs. So <code>sum(nitrate &gt; 1.0)</code> is just "how many sites exceeded the threshold?" You'll use this pattern constantly when screening monitoring data against water quality criteria.</p>
@@ -722,9 +725,9 @@ stream_data[stream_data$land_use == "Urban" & stream_data$nitrate_mgL > 2, ]</te
     <div class="exercise-prompt">
       <p>Using the <code>stream_data</code> data frame from the example above (you'll need to recreate it in your answer cell — code persists between runs in the same cell, but each cell starts fresh):</p>
       <ol class="exercise-steps">
-        <li>What's the average EPT richness at just the forested sites?</li>
-        <li>How many urban sites are in the dataset?</li>
-        <li>Pull out a data frame containing only sites with temperature below 15°C.</li>
+        <li>Store the average EPT richness at the forested sites in <code>forest_ept_mean</code>.</li>
+        <li>Store the count of urban sites in <code>n_urban</code>.</li>
+        <li>Store a data frame of sites with temperature below 15°C in <code>cool_sites</code>.</li>
       </ol>
     </div>
 
@@ -768,13 +771,16 @@ stream_data <- data.frame(
 )
 
 # (a)
-mean(stream_data$ept_taxa[stream_data$land_use == "Forest"])
+forest_ept_mean <- mean(stream_data$ept_taxa[stream_data$land_use == "Forest"])
+forest_ept_mean
 
 # (b)
-sum(stream_data$land_use == "Urban")
+n_urban <- sum(stream_data$land_use == "Urban")
+n_urban
 
 # (c)
-stream_data[stream_data$temp_C < 15, ]</textarea>
+cool_sites <- stream_data[stream_data$temp_C < 15, ]
+cool_sites</textarea>
           <div class="code-output" data-output></div>
         </div>
         <p class="explanation"><strong>Explanation.</strong> In part (a), the inner part <code>stream_data$land_use == "Forest"</code> gives us a TRUE/FALSE vector marking which rows are forest sites. We use that to subset <code>stream_data$ept_taxa</code>, keeping only the EPT counts from forest sites. Reading from the inside out is a useful habit when code looks complicated. Notice the dramatic difference: forest sites average around 18 EPT taxa, while the urban sites average around 4 — exactly the pattern bioassessment programs are designed to detect.</p>
@@ -845,7 +851,7 @@ TRUE | FALSE   # OR: at least one must be TRUE
       <span class="exercise-meta">Compliance check</span>
     </div>
     <div class="exercise-prompt">
-      <p>You're screening a stream site for compliance with two water quality criteria: DO must be at least 6.0 mg/L AND temperature must be below 20°C for it to be considered suitable habitat for a sensitive coldwater species. Given the measurements below, write a single line of code that returns TRUE if the site meets both criteria and FALSE otherwise.</p>
+      <p>You're screening a stream site for compliance with two water quality criteria: DO must be at least 6.0 mg/L AND temperature must be below 20°C for it to be considered suitable habitat for a sensitive coldwater species. Given the measurements below, write a single line of code that stores <code>TRUE</code> in a variable called <code>is_suitable</code> if the site meets both criteria, and <code>FALSE</code> otherwise.</p>
     </div>
 
     <div class="code-cell exercise-cell" data-cell-id="ex-6-1-attempt" data-assess="ex-6-1">
@@ -872,7 +878,8 @@ site_temp <- 17.8
           <textarea class="code-editor">site_do <- 7.4
 site_temp <- 17.8
 
-site_do >= 6.0 & site_temp < 20</textarea>
+is_suitable <- site_do >= 6.0 & site_temp < 20
+is_suitable</textarea>
           <div class="code-output" data-output></div>
         </div>
         <p class="explanation"><strong>Explanation.</strong> A two-part water quality criterion translates directly to a logical AND. Both parts have to be true: DO at or above the minimum AND temperature below the maximum. Try changing <code>site_do</code> to 4.5, then <code>site_temp</code> to 22, and re-running to see how the result changes. This same logic pattern scales directly to filtering whole datasets — same <code>&amp;</code>, same <code>==</code>, just applied to columns instead of single values.</p>
@@ -930,7 +937,7 @@ nitrate_load   # kg N per day</textarea>
   </div>
 
   <div class="aside-note">
-    <strong>Tip:</strong> When an equation has nested operations, build it up from the inside. Use parentheses generously!
+    <strong>Tip:</strong> When an equation has nested operations, build it up from the inside. Follow PEMDAS and use parentheses generously!
   </div>
 
   <!-- Exercise 7.1 -->
@@ -1035,7 +1042,7 @@ stream_data</textarea>
       <ol class="exercise-steps">
         <li>Add a <code>tds_mgL</code> column with the estimated TDS for each site.</li>
         <li>Add a <code>tds_concern</code> column that is TRUE if TDS exceeds 500 mg/L.</li>
-        <li>Filter the data frame to show only the sites of concern.</li>
+        <li>Filter the data frame to a new data frame called <code>concern_sites</code> containing only the rows where <code>tds_concern</code> is <code>TRUE</code>.</li>
       </ol>
     </div>
 
@@ -1076,7 +1083,8 @@ sc_data$tds_mgL <- 0.65 * sc_data$sc_uScm
 sc_data$tds_concern <- sc_data$tds_mgL > 500
 
 # (c)
-sc_data[sc_data$tds_concern, ]</textarea>
+concern_sites <- sc_data[sc_data$tds_concern, ]
+concern_sites</textarea>
           <div class="code-output" data-output></div>
         </div>
         <p class="explanation"><strong>Explanation.</strong> Each line does the calculation for every site in the dataset at once — that's vectorization at work. In part (c), we used the new logical column directly inside the brackets. The conversion factor of 0.65 is itself a simplification — the true ratio depends on the dominant ions in solution and ranges from about 0.55 (NaCl-dominated) to 0.9 (CaSO₄-dominated). A real analysis would calibrate the factor for your specific watershed.</p>
@@ -1363,8 +1371,8 @@ paste("Estimated b =", round(b_estimate, 3))</textarea>
       <p>You measured nitrate concentration along a longitudinal gradient downstream of an agricultural field, recording the distance (km) from the field edge and the resulting concentration (mg N/L).</p>
       <ol class="exercise-steps">
         <li>Combine these into a data frame called <code>gradient_data</code>.</li>
-        <li>Fit a linear model predicting nitrate from distance.</li>
-        <li>Use <code>coef()</code> to extract the slope, and interpret what it means in terms of the watershed processes acting on nitrate.</li>
+        <li>Fit a linear model predicting nitrate from distance and store it in <code>nitrate_mod</code>.</li>
+        <li>Use <code>coef()</code> to extract the slope, store it in a variable called <code>slope</code>, and interpret what it means in terms of the watershed processes acting on nitrate.</li>
       </ol>
     </div>
 
@@ -1399,11 +1407,11 @@ gradient_data <- data.frame(
 )
 
 # (b)
-nitrate_model <- lm(nitrate ~ distance, data = gradient_data)
-summary(nitrate_model)
+nitrate_mod <- lm(nitrate ~ distance, data = gradient_data)
+summary(nitrate_mod)
 
 # (c)
-slope <- coef(nitrate_model)[2]
+slope <- coef(nitrate_mod)[2]
 slope</textarea>
           <div class="code-output" data-output></div>
         </div>
@@ -1480,7 +1488,7 @@ boxplot(do_mg_L ~ land_use, data = stream_data,
       <textarea class="code-editor">distance_km <- c(0.1, 0.5, 1.0, 1.5, 2.0, 3.0, 4.0, 5.0)
 nitrate_mgL <- c(4.8, 4.2, 3.5, 3.1, 2.6, 1.9, 1.5, 1.1)
 gradient_data <- data.frame(distance = distance_km, nitrate = nitrate_mgL)
-nitrate_model <- lm(nitrate ~ distance, data = gradient_data)
+nitrate_mod <- lm(nitrate ~ distance, data = gradient_data)
 
 # Your plot code below…
 </textarea>
@@ -1498,14 +1506,14 @@ nitrate_model <- lm(nitrate ~ distance, data = gradient_data)
           <textarea class="code-editor">distance_km <- c(0.1, 0.5, 1.0, 1.5, 2.0, 3.0, 4.0, 5.0)
 nitrate_mgL <- c(4.8, 4.2, 3.5, 3.1, 2.6, 1.9, 1.5, 1.1)
 gradient_data <- data.frame(distance = distance_km, nitrate = nitrate_mgL)
-nitrate_model <- lm(nitrate ~ distance, data = gradient_data)
+nitrate_mod <- lm(nitrate ~ distance, data = gradient_data)
 
 plot(gradient_data$distance, gradient_data$nitrate,
      main = "Downstream Attenuation of Nitrate",
      xlab = "Distance from Source (km)",
      ylab = "Nitrate (mg N/L)",
      pch = 19, col = "darkgreen")
-abline(nitrate_model, col = "red", lwd = 2)</textarea>
+abline(nitrate_mod, col = "red", lwd = 2)</textarea>
           <div class="code-output" data-output></div>
         </div>
         <p class="explanation"><strong>Explanation.</strong> <code>abline()</code> automatically extracts the intercept and slope from a one-predictor model and draws the line. This wouldn't work for a log-log model because the line is straight only on the log scale — there you'd use <code>predict()</code> and <code>lines()</code> instead.</p>
