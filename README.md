@@ -35,11 +35,13 @@ Then open `http://localhost:8000`.
 ├── css/
 │   └── styles.css          # All styling
 ├── img/
+│   ├── R-Intro-logo.png    # Favicon
 │   └── rstudio-layout.png  # Image of RStudio
 ├── js/
 │   ├── assessments.js      # Per-exercise grading specs (R validators + JS text checks)
-│   ├── runner.js           # WebR initialization + code execution
-│   └── main.js             # UI wiring (run buttons, toggles, TOC, progress bar)
+│   ├── main.js             # UI wiring (run buttons, toggles, TOC, progress bar)
+│   ├── rmd-export.js       # Website to R Markdown conversion
+│   └── runner.js           # WebR initialization + code execution
 └── README.md
 ```
 

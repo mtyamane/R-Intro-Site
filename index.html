@@ -44,7 +44,7 @@
     <div class="hero-meta">
       <span class="meta-tag">Field Manual</span>
       <span class="meta-divider">·</span>
-      <span class="meta-tag">v2.00</span>
+      <span class="meta-tag">v2.01</span>
       <span class="meta-divider">·</span>
       <span class="meta-tag">Watershed Ecology</span>
     </div>
@@ -109,7 +109,7 @@
           <span class="r-status-dot"></span>
           <span class="r-status-text">Loading WebR…</span>
         </div>
-        <p class="toc-help">First load takes ~30 seconds. Code cells run R right in your browser — no install required.</p>
+        <p class="toc-help">First load takes ~30 seconds. Code cells run R right in your browser.</p>
       </div>
     </div>
   </details>
@@ -122,7 +122,7 @@
   <h2 class="about-title">How to use this guide</h2>
   <div class="about-grid">
     <div>
-      <p class="about-step"><span class="about-step-num">1</span> Each chapter introduces one concept with self-contained examples in code blocks. Click <strong>Run</strong> to execute the code — the output appears below the cell.</p>
+      <p class="about-step"><span class="about-step-num">1</span> Each chapter introduces one concept with self-contained examples in code blocks. Click <strong>Run</strong> to execute the code, and output appears below the cell.</p>
     </div>
     <div>
       <p class="about-step"><span class="about-step-num">2</span> Every exercise has an empty editor where you write your own code. Use <strong>Just run</strong> to test how it behaves, or <strong>Run &amp; check</strong> to find out whether your answer is correct.</p>
@@ -131,7 +131,7 @@
       <p class="about-step"><span class="about-step-num">3</span> Click <strong>Reveal solution</strong> when you're ready to compare. Try the exercise yourself first!</p>
     </div>
   </div>
-  <p class="about-note">⚠️ A note on errors: you <em>will</em> get error messages, and that's normal. Read them carefully — they're R telling you exactly where it got confused. Common culprits: a missing parenthesis, a typo, or forgetting a comma.</p>
+  <p class="about-note">⚠️ A note on errors: you <em>will</em> get error messages, and that's normal! Read them carefully — they're R telling you where it got confused. Resources for interpreting errors include Stack Overflow, GeeksforGeeks, or even the R Documentation itself.</p>
 </section>
 
 <!-- ============================================ -->
@@ -143,7 +143,7 @@
     <h2 class="chapter-title">Welcome to R</h2>
   </div>
 
-  <p>R is a free programming language built for working with data. In watershed ecology, it's used for almost everything: analyzing stream chemistry, estimating discharge, modeling nutrient loads, examining macroinvertebrate community composition, and producing publication-quality figures from monitoring data. By the end of this guide, you'll be able to do real watershed data analysis in R.</p>
+  <p>R is a free programming language built for working with data. In watershed ecology, it can be used for almost everything: analyzing stream chemistry, estimating discharge, modeling nutrient loads, examining macroinvertebrate community composition, and producing publication-quality figures from monitoring data. By the end of this guide, you'll be able to do real watershed data analysis in R.</p>
 
   <p>You don't need any programming experience. We'll go step by step, and there are exercises throughout to help you practice. Each exercise is followed by a worked solution so you can check your answer and understand the reasoning.</p>
 
@@ -216,14 +216,14 @@
     <li>Variables you defined in your last session can optionally be restored.</li>
   </ul>
 
-  <p>The recommended workflow is: <strong>one project per analysis</strong>. For a class assignment, make a folder called something like <code>watershed-bioassessment</code>, create a new RStudio Project in it (File → New Project → New Directory), and put all your scripts and data inside. When you reopen the project a week later, you won't have to remember anything about where files live — R already knows.</p>
+  <p>The recommended workflow is: <strong>one project per analysis</strong>. For a class assignment, make a folder called something like <code>watershed-assessment</code>, create a new RStudio Project in it (File → New Project → New Directory), and put all your scripts and data inside. When you reopen the project a week later, you won't have to remember anything about where files live — R already knows.</p>
 
   <p>A typical project folder might look like this:</p>
 
   <ul>
-    <li><code>watershed-bioassessment/</code> — the project root
+    <li><code>watershed-assessment/</code> — the project root
       <ul>
-        <li><code>watershed-bioassessment.Rproj</code> — the project file</li>
+        <li><code>watershed-assessment.Rproj</code> — the project file</li>
         <li><code>data/</code> — raw data files (CSVs, shapefiles)</li>
         <li><code>scripts/</code> — your <code>.R</code> analysis scripts</li>
         <li><code>figures/</code> — plots you generate</li>
@@ -262,7 +262,7 @@ sd(nitrate)</textarea>
     <div class="code-output" data-output></div>
   </div>
 
-  <p>Scripts are the right tool when your output <em>is</em> the analysis itself — a script that loads data, fits a model, and saves a figure to disk. They're the workhorses of reproducible research: anyone with the same data can run your <code>.R</code> file and get the same results. Most assignments and most published analysis pipelines are built from one or more <code>.R</code> scripts.</p>
+  <p>Scripts are the right tool when your output <em>is</em> the analysis itself — a script that loads data, fits a model, and saves a figure to disk. They're the workhorses of reproducible research: anyone with the same data can run your <code>.R</code> file and get the same results. Most published analysis pipelines are built from one or more <code>.R</code> scripts.</p>
 
   <h4>R Markdown and Quarto: writing with code</h4>
   <p>Sometimes the deliverable isn't just the analysis but a <em>document</em> — a lab report, a methods write-up, a thesis chapter. For these, plain <code>.R</code> scripts aren't quite right because you also want explanations, headings, equations, figures, and tables, all woven together with the code that produced them.</p>
@@ -295,7 +295,7 @@ ggplot(gradient_data, aes(x = distance, y = nitrate)) +
     <div class="code-output" data-output></div>
   </div>
 
-  <p>For example: a watershed bioassessment lab report might have an introduction paragraph, a code chunk that loads the field data, another paragraph describing the analysis, a chunk that fits a linear model and prints the summary, then a chunk that produces a final figure — all in one <code>.Rmd</code> or <code>.qmd</code> file. When you knit it, the result is a single PDF or HTML document with the prose flowing naturally around the figures and tables generated by your code. No copy-pasting between R and Word. If the data updates, you just re-knit and everything regenerates.</p>
+  <p>For example: a watershed assessment lab report might have an introduction paragraph, a code chunk that loads the field data, another paragraph describing the analysis, a chunk that fits a linear model and prints the summary, then a chunk that produces a final figure — all in one <code>.Rmd</code> or <code>.qmd</code> file. When you knit it, the result is a single PDF or HTML document with the prose flowing naturally around the figures and tables generated by your code. No copy-pasting between R and Word. If the data updates, you just re-knit and everything regenerates.</p>
 
   <h4>How this webpage compares to all of the above</h4>
   <p>The code cells you'll use throughout this guide sit in an interesting middle ground. Conceptually, they're closest to <strong>Rmd/Quarto chunks</strong> — prose and runnable R code interleaved on a page — except that this page is fixed and you don't render anything. Compared to working in RStudio with real <code>.R</code> or <code>.qmd</code> files, the code cells here are intentionally simpler:</p>
@@ -323,10 +323,10 @@ ggplot(gradient_data, aes(x = distance, y = nitrate)) +
 
   <p>Before you write your first line of R, a few vocabulary words will save you a lot of confusion. This short chapter introduces four terms — <strong>code</strong>, <strong>comments</strong>, <strong>functions</strong>, and <strong>operators</strong> — that show up on every page of this guide.</p>
 
-  <h3>Code</h3>
-  <p><strong>Code</strong> is just text — instructions written for the computer to follow. Each line tells R to do something specific. R reads your code top to bottom, one line at a time, and does exactly what you say. There's no magic; if R does something unexpected, it's because the code <em>told</em> it to. Reading the line carefully is almost always the first step in fixing a bug (or, error in the code).</p>
+  <h3>Code and Comments</h3>
+  <p><strong>Code</strong> is just text — instructions written for the computer to follow. Each line tells R to do something specific. R reads your code top to bottom, one line at a time, and does exactly what you say. If R does something unexpected, it's because the code <em>told</em> it to. Reading the line carefully is almost always the first step in fixing a <strong>bug</strong> (or, problem in the code).</p>
 
-  <p>Lines that start with <code>#</code> are <strong>comments</strong> — notes for humans that R ignores completely. Comments are how you explain to your future self (or a classmate/professor/collaborator) what your code is doing:</p>
+  <p>Lines that start with <code>#</code> are <strong>comments</strong> — notes for humans that R ignores completely. Comments are how you explain to your future self (or classmate/professor/colleague) what your code is doing:</p>
 
   <div class="code-cell" data-cell-id="cell-2-1">
     <div class="code-cell-header">
@@ -360,14 +360,14 @@ round(3.14159, 2)   # input: a number and a digit count; output: 3.14</textarea>
 
   <p>You'll see this same pattern everywhere in R. <code>mean(x)</code> takes a vector <code>x</code> and gives back its average. <code>length(x)</code> gives you how many items are in <code>x</code>. <code>read.csv("nitrate.csv")</code> reads a CSV file. The pattern is always <em>function-name</em> followed by parentheses around the input.</p>
 
-  <p>An argument is not always required for every function (e.g., <code>getwd()</code> is a function that returns your current working directory). Sometimes arguments have default values, so you don't have to specify them each time. If you're curious about the arguments a function accepts, you can use the help function <code>?function_name</code> to view its documentation.</p>
+  <p>Arguments aren't always required for a function (e.g., <code>getwd()</code> is a function that returns your current working directory). Sometimes arguments have default values, so you don't have to specify them each time. If you're curious about the arguments a function accepts, you can use the help function <code>?function_name</code> to view its documentation.</p>
 
   <h3>Operators</h3>
   <p>An <strong>operator</strong> is a special shortcut symbol that acts like a tiny function. You've used them in math your whole life: <code>+</code>, <code>-</code>, <code>*</code>, <code>/</code>. R has the same arithmetic operators, plus a few R-specific ones like <code>&lt;-</code> (used to store values in variables, which we'll see in the next chapter) and <code>==</code> (which checks whether two things are equal).</p>
 
   <p>Operators don't use parentheses around their inputs — they sit between them. So <code>2 + 3</code> is an operator (<code>+</code>) acting on two numbers, while <code>sum(2, 3)</code> is a function (<code>sum</code>) acting on two numbers. Both give 5; the syntax is just different.</p>
 
-  <p>That's the whole vocabulary you need to start reading R code: <strong>code</strong> is what you type, <strong>comments</strong> are notes for humans, <strong>functions</strong> are named procedures called with parentheses, and <strong>operators</strong> are shortcut symbols. With those four ideas in mind, the rest of this guide should feel a lot less mysterious.</p>
+  <p>That's the whole vocabulary you need to start reading R code: <strong>code</strong> is what you type, <strong>comments</strong> are notes for humans, <strong>functions</strong> are named procedures called with parentheses, and <strong>operators</strong> are shortcut symbols.</p>
 </section>
 
 <!-- ============================================ -->
@@ -381,7 +381,7 @@ round(3.14159, 2)   # input: a number and a digit count; output: 3.14</textarea>
 
   <p>A <strong>variable</strong> is a named container that holds a value. Once you store something in a variable, you can refer to it by name in later calculations. This saves typing and makes your code easier to read.</p>
 
-  <p>In R, we assign values using the arrow operator <code>&lt;-</code> or the equals sign <code>=</code>. Read them as "gets":</p>
+  <p>In R, we assign values using the arrow operator <code>&lt;-</code> or the equals sign <code>=</code>. Read it as "gets":</p>
 
   <div class="code-cell" data-cell-id="cell-3-1">
     <div class="code-cell-header">
@@ -411,7 +411,10 @@ taxa_richness</textarea>
       <span class="code-cell-label">R</span>
       <button class="run-btn">Run</button>
     </div>
-    <textarea class="code-editor"># Convert that discharge from cubic meters per second to cubic feet per second
+    <textarea class="code-editor"># From the previous cell
+discharge_cms <- 2.34
+
+# Convert that discharge from cubic meters per second to cubic feet per second
 # (1 cms = 35.3147 cfs)
 discharge_cfs <- discharge_cms * 35.3147
 discharge_cfs</textarea>
@@ -436,7 +439,7 @@ discharge_cfs</textarea>
     <div class="exercise-prompt">
       <p>A stream's cross-section has a measured width of 4.2 meters and an average depth of 0.35 meters. The mean current velocity is 0.68 meters per second. Create three variables to store these values, then compute discharge using the velocity-area method:</p>
       <p class="equation">Q = w × d × v</p>
-      <p>where Q is discharge (m³/s), w is width (m), d is mean depth (m), and v is mean velocity (m/s). Print the result.</p>
+      <p>where Q is discharge (m³/s), w is width (m), d is mean depth (m), and v is mean velocity (m/s). Store the answer in a variable called <code>discharge</code> and print it.</p>
     </div>
 
     <div class="code-cell exercise-cell" data-cell-id="ex-3-1-attempt" data-assess="ex-3-1">
@@ -506,7 +509,10 @@ site_names</textarea>
       <span class="code-cell-label">R</span>
       <button class="run-btn">Run</button>
     </div>
-    <textarea class="code-editor"># Convert all DO readings from mg/L to micrograms per liter
+    <textarea class="code-editor"># From the previous cell
+do_mg_L <- c(9.2, 8.8, 7.5, 6.1, 5.8, 7.2, 8.4, 9.0)
+
+# Convert all DO readings from mg/L to micrograms per liter
 do_mg_L * 1000
 
 # Summary statistics for the DO data
@@ -924,7 +930,7 @@ nitrate_load   # kg N per day</textarea>
   </div>
 
   <div class="aside-note">
-    <strong>Tip:</strong> When an equation has nested operations, build it up from the inside. Use parentheses generously. Always include the units in your variable names or comments — a common (and dangerous) error in watershed work is forgetting unit conversions.
+    <strong>Tip:</strong> When an equation has nested operations, build it up from the inside. Use parentheses generously!
   </div>
 
   <!-- Exercise 7.1 -->
@@ -937,7 +943,7 @@ nitrate_load   # kg N per day</textarea>
       <p>The Streeter-Phelps deficit equation describes how dissolved oxygen recovers downstream of a pollution source. A simplified version for the DO deficit at a given travel time is:</p>
       <p class="equation-block">D<sub>t</sub> = D<sub>0</sub> · e<sup>−k₂t</sup></p>
       <p>where D<sub>0</sub> is the initial DO deficit (mg/L), k₂ is the reaeration rate constant (per day), and t is travel time (days). In R, <code>exp(x)</code> computes e raised to the power of x.</p>
-      <p>A point source produces an initial DO deficit of 4.5 mg/L. The stream has a reaeration rate of 0.35 per day. What is the DO deficit 3 days downstream?</p>
+      <p>A point source produces an initial DO deficit of 4.5 mg/L. The stream has a reaeration rate of 0.35 per day. Compute the DO deficit 3 days downstream and store the result in a variable called <code>Dt</code>.</p>
     </div>
 
     <div class="code-cell exercise-cell" data-cell-id="ex-7-1-attempt" data-assess="ex-7-1">
@@ -1265,7 +1271,7 @@ paste("The reservoir reached", percent_full, "% capacity after", days, "days")</
       <span class="exercise-meta">First-order decay</span>
     </div>
     <div class="exercise-prompt">
-      <p>A closed pond receives a one-time pulse of a contaminant at a concentration of 12.0 mg/L. The contaminant decays at a first-order rate of 8% per day, meaning each day the concentration drops to 92% of its previous value. Use a while loop to determine how many days it will take for the concentration to fall below 1.0 mg/L. Print both the number of days and the final concentration.</p>
+      <p>A closed pond receives a one-time pulse of a contaminant at a concentration of 12.0 mg/L. The contaminant decays at a first-order rate of 8% per day, meaning each day the concentration drops to 92% of its previous value. Use a while loop to determine how many days it will take for the concentration to fall below 1.0 mg/L. Store the day counter in a variable called <code>days</code> and the running concentration in a variable called <code>concentration</code>. Print both at the end.</p>
     </div>
 
     <div class="code-cell exercise-cell" data-cell-id="ex-10-1-attempt" data-assess="ex-10-1">
@@ -1298,7 +1304,7 @@ paste("Concentration fell below 1.0 mg/L after", days,
       "days. Final concentration:", round(concentration, 3), "mg/L")</textarea>
           <div class="code-output" data-output></div>
         </div>
-        <p class="explanation"><strong>Explanation.</strong> The structure mirrors the reservoir example, but we're shrinking a value rather than growing it. The condition <code>concentration &gt;= 1.0</code> keeps the loop running as long as the contaminant is at or above the threshold. Each iteration applies one day of first-order decay (multiplying by 0.92). The final value is slightly below 1.0 because decay happens in discrete daily steps — a useful reminder that simulations make choices about time steps. First-order decay is the most common model for contaminants in surface water.</p>
+        <p class="explanation"><strong>Explanation.</strong> The structure mirrors the reservoir example, but we're shrinking a value rather than growing it. The condition <code>concentration &gt;= 1.0</code> keeps the loop running as long as the contaminant is at or above the threshold. Each iteration applies one day of first-order decay (multiplying by 0.92). The final value is slightly below 1.0 because decay happens in discrete daily steps — a useful reminder that simulations make choices about time steps.</p>
       </div>
     </details>
   </div>
@@ -1676,7 +1682,7 @@ ggplot(watershed_survey, aes(x = nitrate_mgL, y = ept_taxa, color = pct_ag)) +
     <div class="code-output" data-output></div>
   </div>
 
-  <p>This 30-line analysis touches every concept from the guide: variables, vectors, data frames, operators, equations, column-wise math, while loops, linear models, and plotting. Real watershed analyses are just longer versions of this same pattern — and the stressor-response framework you see here is essentially the foundation of state and federal bioassessment programs.</p>
+  <p>This 30-line analysis touches every concept from the guide: variables, vectors, data frames, operators, equations, column-wise math, while loops, linear models, and plotting. Real watershed analyses are just longer versions of this same pattern — and the stressor-response framework you see here is essentially the foundation of state and federal assessment programs.</p>
 </section>
 
 <!-- ============================================ -->
@@ -1692,7 +1698,7 @@ ggplot(watershed_survey, aes(x = nitrate_mgL, y = ept_taxa, color = pct_ag)) +
     <div class="next-card">
       <p class="next-card-tag">Tidyverse</p>
       <h4>dplyr + ggplot2</h4>
-      <p>The <code>dplyr</code> package makes data manipulation much cleaner than base R brackets. Pair it with ggplot2 and you have the most common modern analysis workflow.</p>
+      <p>The <code>dplyr</code> package makes data manipulation much cleaner than base R brackets. Pair it with ggplot2 and you have a modern analysis workflow.</p>
     </div>
     <div class="next-card">
       <p class="next-card-tag">USGS Data</p>

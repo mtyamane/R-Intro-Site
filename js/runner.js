@@ -185,9 +185,15 @@ export async function runR(code, outputEl, button, options = {}) {
     await initWebR();
     shelter = await new webR.Shelter();
 
-    const codeToRun = assessmentId
+    // Cell isolation: every run starts with a clean global environment so
+    // variables from earlier cells can't satisfy a later cell's checks.
+    // We prepend the reset to whatever script we're about to run.
+    const ISOLATION_RESET = 'rm(list = ls(envir = globalenv()), envir = globalenv())\n';
+
+    const baseScript = assessmentId
       ? buildAssessmentScript(code, assessmentId)
       : code;
+    const codeToRun = ISOLATION_RESET + baseScript;
 
     const result = await shelter.captureR(codeToRun, {
       withAutoprint: true,

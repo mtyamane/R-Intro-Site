@@ -14,23 +14,25 @@
 
     // 3.1: discharge = w * d * v = 4.2 * 0.35 * 0.68 ≈ 0.9996
     'ex-3-1': {
-      intro: "We'll check that you computed the discharge correctly using Q = w × d × v.",
+      intro: "We'll check that you computed the discharge and stored it in a variable called 'discharge'.",
       code: `
 .assess <- function() {
   out <- list()
-  vars <- ls(envir = globalenv())
-  found <- FALSE
-  for (v in vars) {
-    val <- tryCatch(get(v, envir = globalenv()), error = function(e) NULL)
-    if (is.numeric(val) && length(val) == 1 && !is.na(val)) {
-      if (abs(val - 0.9996) < 0.01) { found <- TRUE; break }
-    }
-  }
+  has_var <- exists("discharge", envir = globalenv())
+  val <- if (has_var) tryCatch(get("discharge", envir = globalenv()), error = function(e) NULL) else NULL
   out[[1]] <- list(
-    ok = found,
-    label = "Discharge ≈ 1.00 m³/s",
-    detail = if (found) "you computed the discharge correctly"
-             else "no variable in your code holds the value Q = w × d × v ≈ 1.00 m³/s. Did you multiply width × depth × velocity?"
+    ok = has_var,
+    label = "Variable named 'discharge' was created",
+    detail = if (has_var) "found a variable named 'discharge'"
+             else "no variable named 'discharge' was created — the prompt asks you to store the answer in a variable with that name"
+  )
+  value_ok <- has_var && is.numeric(val) && length(val) == 1 &&
+              !is.na(val) && abs(val - 0.9996) < 0.01
+  out[[2]] <- list(
+    ok = value_ok,
+    label = "Discharge value ≈ 1.00 m³/s",
+    detail = if (value_ok) "you computed the discharge correctly"
+             else "the value of 'discharge' should be approximately 1.00 m³/s. Did you multiply width × depth × velocity?"
   )
   out
 }
@@ -156,19 +158,21 @@
       code: `
 .assess <- function() {
   out <- list()
-  vars <- ls(envir = globalenv())
-  found <- FALSE
-  for (v in vars) {
-    val <- tryCatch(get(v, envir = globalenv()), error = function(e) NULL)
-    if (is.numeric(val) && length(val) == 1 && !is.na(val)) {
-      if (abs(val - 1.5747) < 0.01) { found <- TRUE; break }
-    }
-  }
+  has_var <- exists("Dt", envir = globalenv())
+  val <- if (has_var) tryCatch(get("Dt", envir = globalenv()), error = function(e) NULL) else NULL
   out[[1]] <- list(
-    ok = found,
+    ok = has_var,
+    label = "Variable named 'Dt' was created",
+    detail = if (has_var) "found a variable named 'Dt'"
+             else "no variable named 'Dt' was created — the prompt asks you to store the deficit in a variable with that name"
+  )
+  value_ok <- has_var && is.numeric(val) && length(val) == 1 &&
+              !is.na(val) && abs(val - 1.5747) < 0.01
+  out[[2]] <- list(
+    ok = value_ok,
     label = "DO deficit Dt ≈ 1.575 mg/L after 3 days",
-    detail = if (found) "you computed the deficit correctly"
-             else "no variable in your code holds Dt = D0 * exp(-k2 * t) ≈ 1.575. Check that you used exp() and the right sign on -k2*t."
+    detail = if (value_ok) "you computed the deficit correctly"
+             else "the value of 'Dt' should be approximately 1.575. Check that you used exp() and the right sign on -k2*t."
   )
   out
 }
@@ -257,33 +261,33 @@
       }
     },
 
-    // 10.1: while loop — 30 days, final concentration < 1.0
+    // 10.1: while loop — days = 30 and concentration just below 1.0
     'ex-10-1': {
-      intro: "We'll check that your loop counted the right number of days.",
+      intro: "We'll check the 'days' counter and the final 'concentration' value.",
       code: `
 .assess <- function() {
   out <- list()
-  vars <- ls(envir = globalenv())
-  has_30 <- FALSE
-  has_low_conc <- FALSE
-  for (v in vars) {
-    val <- tryCatch(get(v, envir = globalenv()), error = function(e) NULL)
-    if (is.numeric(val) && length(val) == 1 && !is.na(val)) {
-      if (val == 30) has_30 <- TRUE
-      if (val < 1.0 && val > 0.5) has_low_conc <- TRUE
-    }
-  }
+  has_days <- exists("days", envir = globalenv())
+  days_val <- if (has_days) tryCatch(get("days", envir = globalenv()), error = function(e) NULL) else NULL
+  days_ok <- has_days && is.numeric(days_val) && length(days_val) == 1 &&
+             !is.na(days_val) && days_val == 30
   out[[1]] <- list(
-    ok = has_30,
-    label = "Loop terminated at 30 days",
-    detail = if (has_30) "the day counter reached 30"
-             else "expected a counter variable equal to 30. Check that you start at 0 and add 1 each iteration."
+    ok = days_ok,
+    label = "Variable 'days' equals 30",
+    detail = if (days_ok) "the day counter reached 30"
+             else if (!has_days) "no variable named 'days' was created"
+             else "expected 'days' to be 30. Check that you start at 0 and add 1 each iteration of the while loop."
   )
+  has_conc <- exists("concentration", envir = globalenv())
+  conc_val <- if (has_conc) tryCatch(get("concentration", envir = globalenv()), error = function(e) NULL) else NULL
+  conc_ok <- has_conc && is.numeric(conc_val) && length(conc_val) == 1 &&
+             !is.na(conc_val) && conc_val < 1.0 && conc_val > 0.5
   out[[2]] <- list(
-    ok = has_low_conc,
-    label = "Final concentration is below 1.0 mg/L",
-    detail = if (has_low_conc) "the concentration dropped below the threshold (≈ 0.98)"
-             else "expected a final concentration just below 1.0. Make sure each iteration multiplies by 0.92."
+    ok = conc_ok,
+    label = "Variable 'concentration' is just below 1.0 mg/L",
+    detail = if (conc_ok) "concentration dropped below the threshold (≈ 0.98 mg/L)"
+             else if (!has_conc) "no variable named 'concentration' was created"
+             else "expected 'concentration' to be just below 1.0. Make sure each iteration multiplies by 0.92."
   )
   out
 }
